@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: viethung512/tts_auth
+          env:
+            - name: MONGO_URI
+              value: 'mongodb://auth-mongo-srv:27017/tts'
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+            - name: ROOT_USER_USERNAME
+              value: 'admin'
+            - name: ROOT_USER_EMAIL
+              value: 'admin@test.com'
+            - name: ROOT_USER_PHONE_NUMBER
+              value: '0987654321'
+            - name: ROOT_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: root-password
+                  key: ROOT_USER_PASSWORD
+            - name: STATIC_URL
+              value: 'http://vbee-training-tools.dev/static/users'
+      hostAliases:
+        - ip: '192.168.49.2'
+          hostnames:
+            - 'vbee-training-tools.dev'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-srv
+spec:
+  selector:
+    app: auth
+  ports:
+    - name: auth
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

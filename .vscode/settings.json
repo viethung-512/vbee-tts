@@ -1,6 +1,16 @@
 {
-  "cSpell.words": ["kubectl", "skaffold"],
-  "material-icon-theme.folders.associations": {
-    "infra": "../../../../../icons/infra"
-  }
+  "cSpell.words": [
+    "daos",
+    "depl",
+    "kubectl",
+    "kubernetes",
+    "middlewares",
+    "mongodb",
+    "scrypt",
+    "skaffold",
+    "vbee",
+    "viethung",
+    "fileupload",
+    "nats"
+  ]
 }
