@@ -45,8 +45,10 @@ it('GET_ME: return { authUser: data } success', async () => {
     .send({})
     .expect(200);
 
-  expect(response.body.authUser.id).toEqual(user.id);
-  expect(response.body.authUser.username).toEqual(user.username);
-  expect(response.body.authUser.email).toEqual(user.email);
-  expect(response.body.authUser.phoneNumber).toEqual(user.phoneNumber);
+  console.log(response.body);
+
+  expect(response.body.id).toEqual(user.id);
+  expect(response.body.username).toEqual(user.username);
+  expect(response.body.email).toEqual(user.email);
+  expect(response.body.phoneNumber).toEqual(user.phoneNumber);
 });
