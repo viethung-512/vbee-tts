@@ -121,16 +121,16 @@ it('APPROVE_ROLES: success approve role if valid ids', async () => {
   const updatedRole3 = await Role.findById(role3.id);
 
   expect(updatedRole1!.policy.official_version).toEqual(
-    role1.policy.draff_version
+    role1.policy.draft_version
   );
-  expect(updatedRole1!.policy.draff_version).toBeNull();
+  expect(updatedRole1!.policy.draft_version).toBeNull();
   expect(updatedRole2!.policy.official_version).toEqual(
-    role2.policy.draff_version
+    role2.policy.draft_version
   );
-  expect(updatedRole2!.policy.draff_version).toBeNull();
+  expect(updatedRole2!.policy.draft_version).toBeNull();
   expect(updatedRole3!.policy.official_version).toBeNull();
-  expect(updatedRole3!.policy.draff_version).toEqual(
-    role3.policy.draff_version
+  expect(updatedRole3!.policy.draft_version).toEqual(
+    role3.policy.draft_version
   );
 
   expect(response.body.length).toEqual(2);

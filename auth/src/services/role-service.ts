@@ -151,8 +151,8 @@ const approveRoleItem = async (id: string): Promise<RoleDoc | boolean> => {
   }
 
   role.policy = {
-    official_version: role.policy.draff_version,
-    draff_version: null,
+    official_version: role.policy.draft_version,
+    draft_version: null,
   };
   await role.save();
 

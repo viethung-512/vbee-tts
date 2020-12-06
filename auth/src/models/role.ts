@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { Resource, Action } from '@tts-dev/common';
+// @ts-ignore
+import MongooseFuzzySearching from 'mongoose-fuzzy-searching';
 
 interface RoleAttrs {
   name: string;
@@ -18,7 +20,7 @@ interface RoleDoc extends mongoose.Document {
   }[];
   policy: {
     official_version: string | null;
-    draff_version: string | null;
+    draft_version: string | null;
   };
 }
 
@@ -31,13 +33,16 @@ const roleSchema = new mongoose.Schema(
     name: { type: String, required: true },
     resources: [
       {
-        name: { type: String },
+        // @ts-ignore
+        name: String,
         actions: [String],
       },
     ],
     policy: {
-      official_version: { type: String },
-      draff_version: { type: String },
+      // @ts-ignore
+      official_version: String,
+      // @ts-ignore
+      draft_version: String,
     },
   },
   {
@@ -52,12 +57,16 @@ const roleSchema = new mongoose.Schema(
   }
 );
 
+roleSchema.plugin(MongooseFuzzySearching, {
+  fields: ['name'],
+});
+
 roleSchema.statics.build = (attrs: RoleAttrs) => {
   return new Role({
     ...attrs,
     policy: {
       official_version: null,
-      draff_version: attrs.policy || null,
+      draft_version: attrs.policy || null,
     },
   });
 };

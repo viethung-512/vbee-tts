@@ -23,7 +23,7 @@ export class RoleDao extends BaseDao<RoleDoc, RoleModel, RoleAttrs> {
     if (data.policy) {
       role.policy = {
         official_version: null,
-        draff_version: data.policy,
+        draft_version: data.policy,
       };
     }
     await role.save();

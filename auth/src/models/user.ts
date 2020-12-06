@@ -1,4 +1,7 @@
 import mongoose from 'mongoose';
+// @ts-ignore
+import MongooseFuzzySearching from 'mongoose-fuzzy-searching';
+
 import { Password } from '../services/password';
 import { RoleDoc } from './role';
 
@@ -57,9 +60,13 @@ userSchema.pre('save', async function (done) {
   if (this.isModified('password')) {
     const hashed = await Password.toHash(this.get('password'));
     this.set('password', hashed);
-
+    // @ts-ignore
     done();
   }
+});
+
+userSchema.plugin(MongooseFuzzySearching, {
+  fields: ['username', 'email', 'phoneNumber'],
 });
 
 userSchema.statics.build = (attrs: UserAttrs) => {
