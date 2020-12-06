@@ -3,3 +3,9 @@ node_modules/
 common
 
 secret.ts
+
+.next
+
+side-bar/
+
+client-backup/

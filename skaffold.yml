@@ -8,8 +8,11 @@ deploy:
 build:
   local:
     push: false
+  # googleCloudBuild:
+  #   projectId: vbee-tts-297514
   artifacts:
     - image: viethung512/tts_auth
+      # - image: us.gcr.io/vbee-tts-297514/auth
       context: auth
       docker:
         dockerfile: Dockerfile
@@ -17,11 +20,14 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    # - image: viethung512/tts_client
-    #   context: client
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: '**/*.js'
-    #         dest: .
+    - image: viethung512/tts_client
+      # - image: us.gcr.io/vbee-tts-297514/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.ts'
+            dest: .
+          - src: '**/*.tsx'
+            dest: .
