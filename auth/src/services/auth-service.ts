@@ -1,18 +1,23 @@
 import jwt from 'jsonwebtoken';
 import { UploadedFile } from 'express-fileupload';
-import { v4 as uuid } from 'uuid';
 import { ServiceResponse } from '@tts-dev/common';
 
 import { Password } from '../services/password';
 import { UserDoc } from '../models/user';
 import { UserDao } from '../daos/user-dao';
-import { getEnv } from '../configs/env-config';
+import { uploadAPI } from '../api/uploadAPI';
+import { UserUpdatedPublisher } from '../events/publishers/user-updated-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 interface LoginResponse extends ServiceResponse {
   data?: {
     user: UserDoc;
     token: string;
   };
+}
+
+interface GetMeResponse extends ServiceResponse {
+  user?: UserDoc;
 }
 
 interface ChangePasswordResponse extends ServiceResponse {}
@@ -70,15 +75,24 @@ const login = async (
   };
 };
 
-const getMe = async (id?: string): Promise<UserDoc | null> => {
+const getMe = async (id?: string): Promise<GetMeResponse> => {
   if (!id) {
-    return null;
+    return {
+      success: false,
+      errors: [{ message: 'User not found' }],
+    };
   }
 
   const userDao = new UserDao();
   const user = await userDao.findItem(id);
+  if (!user) {
+    return {
+      success: false,
+      errors: [{ message: 'User not found' }],
+    };
+  }
 
-  return user;
+  return { success: true, user };
 };
 
 const changePassword = async (
@@ -136,19 +150,25 @@ const uploadAvatar = async (
     };
   }
 
-  const fileExtension = file.mimetype.split('/')[
-    file.mimetype.split('/').length - 1
-  ];
-  const randomFileName = `${uuid()}.${fileExtension}`;
-
-  file.mv(`./public/images/${userId}/` + randomFileName);
-  const { staticURL } = getEnv();
-  const photoURL = `${staticURL}/images/${userId}/${randomFileName}`;
-
+  const photoURL = await uploadAPI.uploadFile(file, `images/users/${userId}`);
   user.photoURL = photoURL;
   await user.save();
 
-  return { success: true, user };
+  await new UserUpdatedPublisher(natsWrapper.client).publish({
+    id: user.id!,
+    username: user.username,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    photoURL: user.photoURL,
+    role: {
+      id: user.role.id!,
+      name: user.role.name,
+      resources: user.role.resources,
+      policy: user.role.policy.official_version,
+    },
+  });
+
+  return { success: true, user: user };
 };
 
 const authService = { login, getMe, changePassword, uploadAvatar };

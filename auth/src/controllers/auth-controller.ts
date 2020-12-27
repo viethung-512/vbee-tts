@@ -15,7 +15,7 @@ const login = async (req: Request, res: Response) => {
 
   const { user, token } = data!;
   req.session = { jwt: token };
-  res.status(200).send(user);
+  res.status(200).send({ user, token });
 };
 
 const logout = async (req: Request, res: Response) => {
@@ -24,8 +24,12 @@ const logout = async (req: Request, res: Response) => {
 };
 
 const getMe = async (req: Request, res: Response) => {
-  const user = await authService.getMe(req.authUser!.id);
-  res.send(user);
+  const { success, errors, user } = await authService.getMe(req.authUser!.id);
+  if (!success) {
+    throw new BadRequestError('Bad Request', errors);
+  }
+
+  res.status(200).send(user);
 };
 
 const changePassword = async (req: Request, res: Response) => {

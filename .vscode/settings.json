@@ -18,6 +18,9 @@
     "mixins",
     "hookform",
     "clsx",
-    "cropperjs"
+    "cropperjs",
+    "unzipper",
+    "Gaxios",
+    "Kaldi"
   ]
 }

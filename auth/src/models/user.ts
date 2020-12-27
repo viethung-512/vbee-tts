@@ -56,9 +56,12 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre('save', async function (done) {
+userSchema.pre('save', async function (done: any) {
+  // @ts-ignore
   if (this.isModified('password')) {
+    // @ts-ignore
     const hashed = await Password.toHash(this.get('password'));
+    // @ts-ignore
     this.set('password', hashed);
     // @ts-ignore
     done();
@@ -67,6 +70,11 @@ userSchema.pre('save', async function (done) {
 
 userSchema.plugin(MongooseFuzzySearching, {
   fields: ['username', 'email', 'phoneNumber'],
+});
+
+userSchema.virtual('domain').get(function() {
+  // @ts-ignore
+  return this.email.slice(this.email.indexOf('@') + 1);
 });
 
 userSchema.statics.build = (attrs: UserAttrs) => {

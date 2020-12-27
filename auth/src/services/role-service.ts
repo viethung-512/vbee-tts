@@ -7,6 +7,9 @@ import {
 
 import { RoleAttrs, RoleDoc } from '../models/role';
 import { RoleDao } from '../daos/role-dao';
+import { RoleUpdatedPublisher } from '../events/publishers/role-updated-publisher';
+import { natsWrapper } from '../nats-wrapper';
+import { RoleDeletedPublisher } from '../events/publishers/role-deleted-publisher';
 
 interface PaginatedRoles extends PaginateResponse {
   docs: RoleDoc[];
@@ -90,6 +93,12 @@ const updateRole = async (
   }
 
   const updatedRole = await roleDao.updateItem(role, data);
+  await new RoleUpdatedPublisher(natsWrapper.client).publish({
+    id: updatedRole.id!,
+    name: updatedRole.name,
+    resources: updatedRole.resources,
+    policy: updatedRole.policy.official_version,
+  });
   return { success: true, role: updatedRole };
 };
 
@@ -116,6 +125,9 @@ const deleteRoles = async (roleIds: string[]): Promise<DeleteRolesResponse> => {
   }
 
   const roles = deletedResult.filter(r => r !== false) as RoleDoc[];
+  await new RoleDeletedPublisher(natsWrapper.client).publish({
+    ids: roleIds,
+  });
 
   return { success: true, roles };
 };

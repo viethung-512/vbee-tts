@@ -6,6 +6,10 @@ import {
 
 import { UserDao } from '../daos/user-dao';
 import { UserAttrs, UserDoc } from '../models/user';
+import { natsWrapper } from '../nats-wrapper';
+import { UserCreatedPublisher } from '../events/publishers/user-created-publisher';
+import { UserDeletedPublisher } from '../events/publishers/user-deleted-publisher';
+import { UserUpdatedPublisher } from '../events/publishers/user-updated-publisher';
 
 interface PaginatedUser extends PaginateResponse {
   docs: UserDoc[];
@@ -54,6 +58,18 @@ const getUser = async (id: string): Promise<GetUserResponse> => {
 const createUser = async (data: UserAttrs): Promise<CreateUserResponse> => {
   const userDao = new UserDao();
   const user = await userDao.createItem(data);
+  await new UserCreatedPublisher(natsWrapper.client).publish({
+    id: user.id!,
+    username: user.username,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    role: {
+      id: user.role.id!,
+      name: user.role.name,
+      resources: user.role.resources,
+      policy: user.role.policy.official_version,
+    },
+  });
 
   return { success: true, user };
 };
@@ -73,9 +89,23 @@ const updateUser = async (
   }
 
   user = await userDao.updateItem(user, data);
+
+  await new UserUpdatedPublisher(natsWrapper.client).publish({
+    id: user.id!,
+    username: user.username,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    role: {
+      id: user.role.id!,
+      name: user.role.name,
+      resources: user.role.resources,
+      policy: user.role.policy.official_version,
+    },
+  });
+
   return {
     success: true,
-    user,
+    user: user,
   };
 };
 
@@ -101,6 +131,11 @@ const deleteUsers = async (userIds: string[]): Promise<DeleteUsersResponse> => {
   }
 
   const users = deletedUsers.filter(u => u !== false) as UserDoc[];
+
+  await new UserDeletedPublisher(natsWrapper.client).publish({
+    ids: users.map(user => user.id!),
+  });
+
   return { success: true, users };
 };
 

@@ -6,6 +6,8 @@ import { UserDao } from '../daos/user-dao';
 import { Role } from '../models/role';
 import { getEnv } from '../configs/env-config';
 import { User } from '../models/user';
+import { UserCreatedPublisher } from '../events/publishers/user-created-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const initDB = async () => {
   const roleDao = new RoleDao();
@@ -32,6 +34,19 @@ const initDB = async () => {
       role,
     });
     await user.save();
+
+    await new UserCreatedPublisher(natsWrapper.client).publish({
+      id: user.id!,
+      username: user.username,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: {
+        id: user.role.id!,
+        name: role.name,
+        resources: role.resources,
+        policy: role.policy.official_version,
+      },
+    });
   }
 };
 
@@ -42,9 +57,9 @@ export const connectDB = async () => {
     await mongoose.connect(mongo.uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useFindAndModify: true,
       useCreateIndex: true,
     });
-
     await initDB();
   } catch (err) {
     console.error(err);

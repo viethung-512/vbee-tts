@@ -31,6 +31,14 @@ export class UserDao extends BaseDao<UserDoc, UserModel, UserAttrs> {
     user.photoURL = data.photoURL || user.photoURL;
     await user.save();
 
+    await Promise.all(
+      this.populate.map(async p => {
+        await user.populate(p).execPopulate();
+      })
+    );
+
+    // const updated = await User.findById(user.id).populate(this.populate);
+
     return user;
   }
 
