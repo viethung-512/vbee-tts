@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          # image: viethung512/tts_worker
+          image: us.gcr.io/vbee-tts-297514/worker
+          env:
+            - name: PORT
+              value: '4000'
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID
+              value: 'tts'
+
+            - name: REDIS_HOST
+              value: '104.154.106.47'
+            - name: REDIS_PORT
+              value: '6379'
+            - name: REDIS_PASSWORD
+              value: 'viethung512'
+
+            - name: STATIC_URL
+              value: 'http://tts-static.hung97.com/static/resource'
+            - name: STATIC_HOST
+              value: 'http://tts-static.hung97.com'
+            - name: HOST_URL
+              value: 'http://tts-api.hung97.com'
