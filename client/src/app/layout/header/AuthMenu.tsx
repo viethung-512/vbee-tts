@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
 
 const AuthMenu: React.FC = props => {
   const classes = useStyles();
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const dispatch = useDispatch();
   const { user, loading } = useSelector<AppState, AuthState>(
     state => state.auth

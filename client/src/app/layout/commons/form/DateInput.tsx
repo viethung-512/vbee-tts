@@ -1,7 +1,6 @@
 import React from 'react';
 import { Control, Controller } from 'react-hook-form';
 
-import { makeStyles } from '@material-ui/core/styles';
 import { DateTimePicker } from '@material-ui/pickers';
 import { TextFieldProps } from '@material-ui/core/TextField';
 
@@ -9,50 +8,43 @@ interface Props {
   label: string;
   name: string;
   control: Control;
-  error: Record<string, string>;
-  variant: TextFieldProps['variant'];
+  isError: boolean;
+  variant?: TextFieldProps['variant'];
+  errorMessage?: string;
   fullWidth?: boolean;
+  size?: TextFieldProps['size'];
 }
-
-const useStyles = makeStyles(theme => ({
-  inputRoot: {
-    '& .MuiOutlinedInput-root': {
-      '&:hover fieldset': {
-        borderColor: theme.palette.primary.main,
-      },
-    },
-  },
-}));
 
 const DateInput: React.FC<Props> = ({
   label,
   name,
   control,
-  error,
+  isError,
+  errorMessage,
   variant = 'outlined',
   fullWidth = true,
+  size = 'small',
   ...rest
 }) => {
-  const classes = useStyles();
-
   return (
     <Controller
-      as={
-        // @ts-ignore
+      render={({ onChange, value }) => (
         <DateTimePicker
+          size={size}
           margin='normal'
           label={label}
           fullWidth={fullWidth}
           inputVariant={variant}
+          onChange={onChange}
+          value={value}
           autoComplete='off'
-          className={classes.inputRoot}
           style={{ marginTop: 0 }}
-          error={Boolean(error)}
-          helperText={error?.message}
+          error={isError}
+          helperText={isError ? errorMessage : null}
           format='MMMM, dd yyyy'
           {...rest}
         />
-      }
+      )}
       control={control}
       name={name}
     />

@@ -5,7 +5,13 @@ export type UpdateAuthProfileField = Partial<
   Pick<User, 'firstName' | 'lastName' | 'username'>
 >;
 
-const login = async (phoneNumber: string, password: string): Promise<User> => {
+const login = async (
+  phoneNumber: string,
+  password: string
+): Promise<{
+  user: User;
+  token: string;
+}> => {
   return axiosClient.post('/api/auth/login', { phoneNumber, password });
 };
 
@@ -47,6 +53,10 @@ const uploadAvatarProfile = async (image: File): Promise<User> => {
   });
 };
 
+const checkBroadcaster = async (): Promise<{ data: boolean }> => {
+  return axiosClient.get('/api/broadcasters/isBroadcaster');
+};
+
 const authAPI = {
   login,
   logout,
@@ -54,6 +64,7 @@ const authAPI = {
   updateAuthInfo,
   updatePassword,
   uploadAvatarProfile,
+  checkBroadcaster,
 };
 
 export default authAPI;

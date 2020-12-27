@@ -3,7 +3,6 @@ import { RouteComponentProps } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import ImportSentencesContainer from 'features/sentence/containers/ImportSentencesContainer';
-
 interface Props {
   history: RouteComponentProps['history'];
 }
@@ -19,10 +18,7 @@ const ImportSentences: React.FC<Props> = ({ history }) => {
 
   return (
     <div className={classes.root}>
-      <ImportSentencesContainer />
-
-      {/* TODO: add confirms */}
-      {/* <Confirms /> */}
+      <ImportSentencesContainer history={history} />
     </div>
   );
 };

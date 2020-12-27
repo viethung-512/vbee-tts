@@ -16,6 +16,7 @@ interface Props {
   handleGoLast: (...args: any[]) => void;
   handleNext: (...args: any[]) => void;
   handlePrevious: (...args: any[]) => void;
+  disabled: boolean;
 }
 
 const IconButton = withStyles(theme => ({
@@ -30,8 +31,9 @@ const Navigation: React.FC<Props> = ({
   handleGoLast,
   handleNext,
   handlePrevious,
+  disabled,
 }) => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
 
   const actions = [
     {
@@ -57,15 +59,27 @@ const Navigation: React.FC<Props> = ({
   ];
   return (
     <Grid container justify='space-between'>
-      {actions.map(action => (
-        <Grid item key={action.title}>
-          <Tooltip title={action.title}>
-            <IconButton color='secondary' onClick={action.callback}>
-              {action.icon}
-            </IconButton>
-          </Tooltip>
-        </Grid>
-      ))}
+      {disabled
+        ? actions.map(action => (
+            <Grid item key={action.title}>
+              <IconButton
+                color='secondary'
+                onClick={action.callback}
+                disabled={disabled}
+              >
+                {action.icon}
+              </IconButton>
+            </Grid>
+          ))
+        : actions.map(action => (
+            <Grid item key={action.title}>
+              <Tooltip title={action.title}>
+                <IconButton color='secondary' onClick={action.callback}>
+                  {action.icon}
+                </IconButton>
+              </Tooltip>
+            </Grid>
+          ))}
     </Grid>
   );
 };

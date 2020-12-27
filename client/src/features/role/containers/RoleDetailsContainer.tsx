@@ -3,6 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
+import { useConfirm } from 'material-ui-confirm';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -12,6 +13,9 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
+import useMutation from 'hooks/useMutation';
+import useAlert from 'hooks/useAlert';
 import RoleDetailsHeader from '../components/RoleDetailsHeader';
 import { Role, RoleResource } from 'app/types/role';
 import RoleDetailsForm, {
@@ -20,7 +24,6 @@ import RoleDetailsForm, {
 import { createRoleValidator } from 'app/utils/validators';
 import roleAPI from 'app/api/roleAPI';
 import { Resource } from '@tts-dev/common';
-import useMutation from 'hooks/useMutation';
 
 interface Props {
   history: RouteComponentProps['history'];
@@ -40,10 +43,13 @@ const defaultValues: RoleActionField = {
 };
 
 const RoleDetailsContainer: React.FC<Props> = ({ history, roleId }) => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
   const [role, setRole] = useState<Role>();
+  const [deleting, setDeleting] = useState(false);
   const [fetchRoleLoading, setFetchRoleLoading] = useState(false);
+  const confirm = useConfirm();
+  const { alertSuccess, alertError } = useAlert();
   const {
     control,
     formState,
@@ -121,6 +127,28 @@ const RoleDetailsContainer: React.FC<Props> = ({ history, roleId }) => {
     // eslint-disable-next-line
   }, [roleId]);
 
+  const handleDelete = async () => {
+    if (roleId) {
+      confirm({ description: t('WARNING_DELETE_ROLE') })
+        .then(() => {
+          setDeleting(true);
+          return roleAPI.deleteRoles([roleId]);
+        })
+        .then(users => {
+          console.log(users);
+          alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
+          history.push('/roles');
+
+          setDeleting(false);
+        })
+        .catch(err => {
+          console.log(err);
+          alertError(t('MESSAGE_ALERT_ERROR'));
+          setDeleting(false);
+        });
+    }
+  };
+
   const submitForm = handleSubmit(async values => {
     if (roleId) {
       await updateRole(roleId, {
@@ -148,10 +176,12 @@ const RoleDetailsContainer: React.FC<Props> = ({ history, roleId }) => {
       <Grid item container className={classes.toolbar}>
         <RoleDetailsHeader
           submitForm={submitForm}
+          handleDelete={handleDelete}
           loading={fetchRoleLoading}
+          submitting={submitting}
+          deleting={deleting}
           roleId={roleId}
           isValid={formState.isValid && resourcesValid}
-          submitting={submitting}
           role={role}
         />
       </Grid>

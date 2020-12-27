@@ -35,8 +35,8 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     [theme.breakpoints.down('sm')]: {
-      marginLeft: 0,
-      width: '100%',
+      marginLeft: `${0} !important`,
+      width: '100% !important',
     },
   },
   appBarShift: {

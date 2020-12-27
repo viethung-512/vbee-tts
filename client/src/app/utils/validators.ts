@@ -89,10 +89,10 @@ export const createVoiceValidator = yup.object().shape({
 });
 
 export const createBroadcasterValidator = yup.object().shape({
-  sentenceTypes: yup
+  types: yup
     .array()
     .required()
-    .min(1)
+    .min(1, 'Please choose at least 1 type')
     .of(
       yup.object().shape({
         label: yup.string(),

@@ -17,7 +17,7 @@ import { uploadAvatar } from 'features/auth/authSlice';
 import { FieldError } from '@tts-dev/common';
 
 const CropperAvatarModal: React.FC = props => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const cropper = useRef<any>(null);
   const [cropData, setCropData] = useState<File>();

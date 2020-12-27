@@ -9,36 +9,35 @@ import LoadingContainer from 'app/layout/commons/async/LoadingContainer';
 import DynamicRoute from 'app/layout/commons/DynamicRoute';
 
 import LoginPage from 'pages/auth/Login';
-import routes from 'app/configs/routes';
+import useRoute from 'hooks/useRoute';
 
 interface Props {
   loading: boolean;
 }
 
-const getPageTitle = (pathname: string): string => {
-  const routeMatch = routes.find(r => {
-    if (typeof r.path === 'string') {
-      return r.path === pathname;
-    }
-
-    if (Array.isArray(r.path)) {
-      return r.path.includes(pathname);
-    }
-
-    return false;
-  });
-  if (!routeMatch) {
-    return 'Some page title';
-  }
-
-  return routeMatch.pageTitle!;
-};
-
 const AppRoutes: React.FC<Props> = ({ loading }) => {
   const theme = useTheme();
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
+  const { routes } = useRoute();
+
   const secondaryColor = theme.palette.secondary.main;
+
+  const getPageTitle = (pathname: string): string => {
+    const routeMatch = routes.find(r => {
+      if (r.path) {
+        return pathname.split('/')[1] === r.path.split('/')[1];
+      }
+
+      return false;
+    });
+
+    if (!routeMatch) {
+      return 'Some page title';
+    }
+
+    return routeMatch.pageTitle!;
+  };
 
   const title = t(getPageTitle(location.pathname));
 
@@ -50,7 +49,6 @@ const AppRoutes: React.FC<Props> = ({ loading }) => {
         private={false}
         component={LoginPage}
         hasPermission={true}
-        resources={[]}
       />
       <Route
         render={() => {
@@ -66,8 +64,7 @@ const AppRoutes: React.FC<Props> = ({ loading }) => {
                       path={route.path}
                       component={route.component}
                       private={route.private}
-                      hasPermission={true}
-                      resources={route.resources}
+                      hasPermission={route.hasPermission}
                     />
                   ))}
                 </Switch>

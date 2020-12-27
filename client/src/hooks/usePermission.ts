@@ -7,12 +7,12 @@ const usePermission = () => {
     state => state.auth
   );
 
-  const isRootUser =
-    authUser && authUser.role && authUser.role.name === rootRole.name;
+  const isRootUser = Boolean(
+    authUser && authUser.role && authUser.role.name === rootRole.name
+  );
   // const isBroadcaster = authUser && authUser.isBroadcaster;
 
-  // TODO: need to update
-  const isBroadcaster = false;
+  const isBroadcaster = Boolean(authUser?.isBroadcaster);
 
   const canCreateUser = canAccessResource(
     authUser!,

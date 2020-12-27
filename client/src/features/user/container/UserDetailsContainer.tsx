@@ -3,6 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
+import { useConfirm } from 'material-ui-confirm';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -13,6 +14,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+import useAlert from 'hooks/useAlert';
 import useAutoComplete from 'hooks/useAutoComplete';
 import { getUserActionValidator } from 'app/utils/validators';
 import UserDetailsHeader from '../components/UserDetailsHeader';
@@ -53,9 +55,12 @@ const getDefaultValues = (userId?: string): UserActionField => {
 };
 
 const UserDetailsContainer: React.FC<Props> = ({ userId, history }) => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
   const [user, setUser] = useState<User>();
+  const confirm = useConfirm();
+  const { alertSuccess, alertError } = useAlert();
+  const [deleting, setDeleting] = useState(false);
   const [fetchUserLoading, setFetchUserLoading] = useState(false);
   const {
     control,
@@ -122,6 +127,28 @@ const UserDetailsContainer: React.FC<Props> = ({ userId, history }) => {
     };
   }, [reset, userId]);
 
+  const handleDelete = async () => {
+    if (userId) {
+      confirm({ description: t('WARNING_DELETE_USER') })
+        .then(() => {
+          setDeleting(true);
+          return userAPI.deleteUsers([userId]);
+        })
+        .then(users => {
+          console.log(users);
+          alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
+          history.push('/sentences');
+
+          setDeleting(false);
+        })
+        .catch(err => {
+          console.log(err);
+          alertError(t('MESSAGE_ALERT_ERROR'));
+          setDeleting(false);
+        });
+    }
+  };
+
   const submitForm = handleSubmit(async values => {
     if (userId) {
       await updateUser(userId, {
@@ -149,8 +176,10 @@ const UserDetailsContainer: React.FC<Props> = ({ userId, history }) => {
         <UserDetailsHeader
           loading={fetchUserLoading}
           submitting={submitting}
+          deleting={deleting}
           isValid={formState.isValid}
           submitForm={submitForm}
+          handleDelete={handleDelete}
           userId={userId}
           user={user}
         />

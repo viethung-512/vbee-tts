@@ -1,6 +1,5 @@
-import { Resource, Action } from '@tts-dev/common';
+import { Resource, Action, DialectType } from '@tts-dev/common';
 
-import { dialects } from './constants';
 import { uidLength } from './config';
 
 export const isEmpty = (str: string): boolean => {
@@ -86,25 +85,20 @@ export const getActionName = (actCode: Action) => {
   return actName;
 };
 
-// TODO: need to update
-export const getDialectInput = (dialect: any) => {
-  const inputValue = {
-    name: '',
-    label: '',
-  };
-  switch (dialect.name) {
-    case dialects.SAIGON:
-      inputValue.name = 'dialectSG';
-      inputValue.label = 'Cách đọc giọng Sài Gòn';
-      break;
-    case dialects.HANOI:
-    default:
-      inputValue.name = 'dialectHN';
-      inputValue.label = 'Cách đọc giọng Hà Nội';
-      break;
+export const getDialectInput = (
+  dialect: DialectType
+): { name: 'dialectHN' | 'dialectSG'; label: string } => {
+  if (dialect === DialectType.SAIGON) {
+    return {
+      name: 'dialectSG',
+      label: 'Cách đọc giọng Sài Gòn',
+    };
   }
 
-  return inputValue;
+  return {
+    name: 'dialectHN',
+    label: 'Cách đọc giọng Hà Nội',
+  };
 };
 
 export const formatUID = (uid: number): string => {

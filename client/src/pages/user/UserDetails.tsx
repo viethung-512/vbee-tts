@@ -4,7 +4,6 @@ import { RouteComponentProps } from 'react-router-dom';
 import Container from '@material-ui/core/Container';
 
 import UserDetailsContainer from 'features/user/container/UserDetailsContainer';
-import Confirms from 'features/user/Confirms';
 
 interface Props {
   match: RouteComponentProps<{ id: string }>['match'];
@@ -17,7 +16,6 @@ const UserDetails: React.FC<Props> = ({ match, history }) => {
   return (
     <Container style={{ backgroundColor: 'inherit' }}>
       <UserDetailsContainer userId={userId} history={history} />
-      <Confirms history={history} />
     </Container>
   );
 };

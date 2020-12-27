@@ -82,7 +82,7 @@ const getOpening = (selected: string, menus: SidebarMenu[]) => {
 
 const useSidebar = ({ drawerOpen }: { drawerOpen: boolean }) => {
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const [opening, setOpening] = useState('');
   const [selected, setSelected] = useState('');
 

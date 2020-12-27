@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const AccountTab: React.FC<Props> = ({ user: authUser }) => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const theme = useTheme();
   const classes = useStyles();
   const dispatch = useDispatch<AppDispatch>();

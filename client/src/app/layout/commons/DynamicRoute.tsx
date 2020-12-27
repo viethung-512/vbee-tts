@@ -7,7 +7,6 @@ import { AppRoute } from 'app/configs/routes';
 const DynamicRoute: React.FC<AppRoute> = ({
   component,
   private: isPrivate,
-  resources,
   hasPermission,
   ...rest
 }) => {
@@ -26,17 +25,7 @@ const DynamicRoute: React.FC<AppRoute> = ({
             return <Redirect to='/login' />;
           }
 
-          const permission =
-            resources.length === 0
-              ? hasPermission
-              : user?.role.resources.some(rs =>
-                  resources.some(resource => {
-                    return (
-                      resource.name === rs.name &&
-                      resource.actions.some(act => rs.actions.includes(act))
-                    );
-                  })
-                );
+          const permission = hasPermission;
 
           if (user && !permission) {
             return <Redirect to='/unauthorized' />;

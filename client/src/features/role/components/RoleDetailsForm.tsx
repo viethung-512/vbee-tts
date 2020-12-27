@@ -61,7 +61,7 @@ const RoleDetailsForm: React.FC<Props> = ({
   setResources,
   resourcesValid,
 }) => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
 
   // const actionOptions: OptionsType<ActionOptionType> = Object.values(

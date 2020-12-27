@@ -37,7 +37,7 @@ interface RouteItem {
 
 function useRoutes() {
   // const location = useLocation();
-  // const { t } = useTranslation();
+  // const { t }: { t: any } = useTranslation();
   // const {
   //   isBroadcaster,
   //   isRootUser,

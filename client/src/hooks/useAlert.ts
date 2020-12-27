@@ -10,11 +10,21 @@ import {
 const useAlert = () => {
   const dispatch = useDispatch();
 
-  const alertSuccess = (message: string) => dispatch(success(message));
-  const alertError = (message: string) => dispatch(error(message));
-  const alertWarning = (message: string) => dispatch(warning(message));
-  const alertInfo = (message: string) => dispatch(info(message));
-  const alertClear = () => dispatch(clear());
+  const alertSuccess = (message: string) => {
+    dispatch(success(message));
+  };
+  const alertError = (message: string) => {
+    dispatch(error(message));
+  };
+  const alertWarning = (message: string) => {
+    dispatch(warning(message));
+  };
+  const alertInfo = (message: string) => {
+    dispatch(info(message));
+  };
+  const alertClear = () => {
+    dispatch(clear());
+  };
 
   return {
     alertSuccess,

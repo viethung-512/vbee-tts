@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Color } from '@material-ui/lab/Alert';
 
 interface AlertState {
@@ -17,7 +17,7 @@ const alertSlice = createSlice({
   name: 'alert',
   initialState,
   reducers: {
-    success: (state, action) => {
+    success: (state, action: PayloadAction<string>) => {
       state.open = true;
       state.status = 'success';
       state.message = action.payload;

@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, Fragment } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 // @ts-ignore
 import readXlsxFile from 'read-excel-file';
 import { useTranslation } from 'react-i18next';
+import { useConfirm } from 'material-ui-confirm';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -11,11 +13,16 @@ import AttachFileIcon from '@material-ui/icons/AttachFile';
 import Chip from '@material-ui/core/Chip';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-import useModal from 'hooks/useModal';
+import useAlert from 'hooks/useAlert';
+import usePromiseSubscription from 'hooks/usePromiseSubscription';
 import PreviewData from '../components/PreviewData';
 import Button from 'app/layout/commons/form/Button';
-import { modalActionTypes } from 'app/utils/constants';
 import sentenceAPI from 'app/api/sentenceAPI';
+import { FieldError } from '@tts-dev/common';
+
+interface Props {
+  history: RouteComponentProps['history'];
+}
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -67,39 +74,51 @@ const getData = (previewData: any[]) => {
   return data;
 };
 
-const ImportSentencesContainer: React.FC = () => {
-  const { t } = useTranslation();
+const ImportSentencesContainer: React.FC<Props> = ({ history }) => {
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
   const theme = useTheme();
   const [files, setFiles] = useState<any>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [sampleFileURL, setSampleFileURL] = useState('');
-  const [fetching, setFetching] = useState(false);
   const [previewData, setPreviewData] = useState<any>([]);
-  const { openModal } = useModal();
+  const confirm = useConfirm();
+
+  const { alertSuccess, alertError } = useAlert();
+  const {
+    value: sampleFileURL,
+    isPending: fetching,
+  } = usePromiseSubscription<string>(sentenceAPI.getSampleImportFileURL, '');
+
+  const handleImport = async (file: any) => {
+    confirm({ description: t('WARNING_IMPORT_SENTENCE') })
+      .then(() => {
+        setLoading(true);
+        sentenceAPI
+          .importSentences(file)
+          .then(sentences => {
+            console.log(sentences);
+            alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
+            history.push('/sentences');
+
+            setLoading(false);
+          })
+          .catch((err: FieldError[]) => {
+            err.forEach(er => {
+              alertError(er.message);
+            });
+            setLoading(false);
+          });
+      })
+      .catch(() => {
+        // console.log('test');
+        // console.log(err);
+        // alertError(t('MESSAGE_ALERT_ERROR'));
+        // setLoading(false);
+      });
+  };
 
   const uploadFileRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    let active = true;
-
-    const getSampleFileURL = async () => {
-      setFetching(true);
-      const url = await sentenceAPI.getSampleImportFileURL();
-
-      setSampleFileURL(url);
-      setFetching(false);
-    };
-
-    if (active) {
-      getSampleFileURL();
-    }
-
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
@@ -147,7 +166,7 @@ const ImportSentencesContainer: React.FC = () => {
   const rowData = previewData.length > 0 ? getData(previewData) : [];
 
   return (
-    <>
+    <Fragment>
       {fetching && <LinearProgress color='secondary' />}
       <Grid container direction='column' className={classes.container}>
         <Grid item>
@@ -215,12 +234,9 @@ const ImportSentencesContainer: React.FC = () => {
               <Button
                 content={t('TITLE_IMPORT_SENTENCE')}
                 variant='secondary'
-                onClick={() =>
-                  openModal('ConfirmModal', {
-                    data: { rowData },
-                    type: modalActionTypes.IMPORT_SENTENCE,
-                  })
-                }
+                onClick={() => {
+                  handleImport(files[0]);
+                }}
                 style={{ marginRight: theme.spacing(2) }}
               />
             )}
@@ -243,7 +259,7 @@ const ImportSentencesContainer: React.FC = () => {
           )}
         </Grid>
       </Grid>
-    </>
+    </Fragment>
   );
 };
 

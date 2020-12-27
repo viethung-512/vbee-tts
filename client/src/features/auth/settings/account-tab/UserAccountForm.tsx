@@ -35,7 +35,7 @@ const UserAccountForm: React.FC<Props> = ({
   loading,
   errors,
 }) => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
 
   return (

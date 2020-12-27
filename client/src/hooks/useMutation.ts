@@ -9,7 +9,7 @@ function useMutation<Fields, Res>(
   setError: (name: FieldName<Fields>, error: ErrorOption) => void,
   callback?: (...args: any) => void
 ) {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Res>();
   const [variables, setVariables] = useState<{
@@ -19,7 +19,7 @@ function useMutation<Fields, Res>(
     active: false,
     data: null,
   });
-  const { alertSuccess } = useAlert();
+  const { alertSuccess, alertError } = useAlert();
 
   useEffect(() => {
     const doAsyncRequest = async (...args: any) => {
@@ -38,10 +38,14 @@ function useMutation<Fields, Res>(
         console.log(err);
 
         (err as FieldError[]).forEach(e => {
-          const field = e.field as FieldName<Fields>;
-          const message = e.message;
+          if (e.field) {
+            const field = e.field as FieldName<Fields>;
+            const message = e.message;
 
-          setError(field, { message });
+            setError(field, { message });
+          } else {
+            alertError(e.message);
+          }
         });
 
         setLoading(false);

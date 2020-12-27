@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-import useModal from 'hooks/useModal';
 import usePermission from 'hooks/usePermission';
 import Button from 'app/layout/commons/form/Button';
 import { Role } from 'app/types/role';
@@ -19,7 +18,9 @@ interface Props {
   isValid: boolean;
   loading: boolean;
   submitting: boolean;
+  deleting: boolean;
   submitForm: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  handleDelete: () => void;
   role?: Role;
   roleId?: string;
 }
@@ -35,14 +36,15 @@ const RoleDetailsHeader: React.FC<Props> = ({
   isValid,
   loading,
   submitting,
+  deleting,
   role,
   submitForm,
+  handleDelete,
   roleId,
 }) => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
   const theme = useTheme();
-  const { openModal } = useModal();
   const { canCreateRole, canUpdateRole, canDeleteRole } = usePermission();
 
   const isShowDeleteButton = Boolean(roleId) && canDeleteRole;
@@ -82,12 +84,11 @@ const RoleDetailsHeader: React.FC<Props> = ({
                 content={t('ACTIONS_DELETE')}
                 variant='secondary'
                 disabled={submitting}
-                onClick={() =>
-                  openModal('ConfirmModal', {
-                    data: { id: roleId },
-                  })
-                }
+                onClick={() => {
+                  handleDelete();
+                }}
                 style={{ marginRight: theme.spacing(2) }}
+                loading={deleting}
               />
             )}
           </Grid>

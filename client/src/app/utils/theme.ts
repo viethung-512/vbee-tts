@@ -45,6 +45,15 @@ const theme = createMuiTheme({
       },
     },
   },
+  overrides: {
+    MuiOutlinedInput: {
+      root: {
+        '&:hover fieldset': {
+          borderColor: `${parentTheme.palette.primary.main} !important`,
+        },
+      },
+    },
+  },
 });
 
 export default theme;

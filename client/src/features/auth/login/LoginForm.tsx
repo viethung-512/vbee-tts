@@ -46,7 +46,7 @@ const LoginForm: React.FC<Props> = ({
   errors,
 }) => {
   const classes = useStyles();
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
 
   return (
     <form onSubmit={submitForm} className={classes.form}>

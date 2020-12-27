@@ -11,10 +11,13 @@ const useModal = () => {
     state => state.modal
   );
 
-  const openModal = (modalType: string, modalProps: any) =>
+  const openModal = (modalType: string, modalProps?: any) => {
     dispatch(open({ modalType, modalProps }));
+  };
 
-  const closeModal = () => dispatch(close());
+  const closeModal = () => {
+    dispatch(close());
+  };
 
   const getModalStatus = (type: string) =>
     type === modalType ? status : false;

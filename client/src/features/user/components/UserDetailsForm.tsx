@@ -53,7 +53,7 @@ const UserDetailsForm: React.FC<Props> = ({
   setRoles,
   setSearchTerm,
 }) => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
 
   return (
@@ -118,6 +118,8 @@ const UserDetailsForm: React.FC<Props> = ({
         <Grid item>
           <AutoComplete
             name='role'
+            isError={Boolean(errors?.role)}
+            errorMessage={(errors?.role as any)?.message}
             control={control}
             label={t('MODEL_ROLE')}
             setTerm={setSearchTerm}

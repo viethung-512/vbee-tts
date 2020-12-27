@@ -1,9 +1,10 @@
-import { PaginateResponse } from '@tts-dev/common';
+// import { PaginateResponse } from '@tts-dev/common';
 import { useEffect, useState } from 'react';
 import useDebounce from './useDebounce';
 
 function useAutoComplete<T>(
-  query: (...args: any[]) => Promise<PaginateResponse>
+  query: (...args: any[]) => Promise<any>,
+  skip: boolean = false
 ) {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchData, setSearchData] = useState<T[]>([]);
@@ -21,14 +22,14 @@ function useAutoComplete<T>(
       setLoading(false);
     };
 
-    if (active) {
+    if (active && !skip) {
       fetchData(debounceSearchTerm);
     }
 
     return () => {
       active = false;
     };
-  }, [debounceSearchTerm, query]);
+  }, [debounceSearchTerm, skip, query]);
 
   return {
     setSearchTerm,

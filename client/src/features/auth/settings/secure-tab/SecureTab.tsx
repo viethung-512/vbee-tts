@@ -33,7 +33,7 @@ const defaultValues = {
 };
 
 const SecureTab: React.FC = props => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch<AppDispatch>();

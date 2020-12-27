@@ -58,7 +58,7 @@ const Tab = withStyles(theme => ({
 }))(MUITab);
 
 const SettingsContainer: React.FC = () => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
   const theme = useTheme();
   const { user: authUser, loading } = useSelector<AppState, AuthState>(

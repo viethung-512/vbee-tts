@@ -14,6 +14,8 @@ interface Props {
   options: any[];
   labelField: string;
   loading: boolean;
+  isError: boolean;
+  errorMessage?: string;
   setTerm: React.Dispatch<React.SetStateAction<string>>;
   setOptions: React.Dispatch<React.SetStateAction<any[]>>;
   variant?: BaseTextFieldProps['variant'];
@@ -37,6 +39,8 @@ const AutoComplete: React.FC<Props> = ({
   options,
   labelField,
   loading,
+  isError,
+  errorMessage,
   variant = 'outlined',
   size = 'small',
   setOptions,
@@ -79,10 +83,12 @@ const AutoComplete: React.FC<Props> = ({
             onClose={() => setOpen(false)}
             renderInput={params => (
               <TextField
-                {...params}
+                error={isError}
+                helperText={errorMessage}
                 label={label}
                 variant={variant}
                 className={classes.inputRoot}
+                {...params}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (

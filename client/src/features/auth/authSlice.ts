@@ -13,7 +13,6 @@ interface LoginArgs {
   phoneNumber: string;
   password: string;
 }
-
 interface UpdateAuthProfileArgs {
   id: string;
   data: UpdateAuthProfileField;
@@ -34,7 +33,11 @@ const login = createAsyncThunk<User, LoginArgs, { rejectValue: FieldError[] }>(
   'auth:login',
   async ({ phoneNumber, password }, thunkAPI) => {
     try {
-      const user = await authAPI.login(phoneNumber, password);
+      const { user, token } = await authAPI.login(phoneNumber, password);
+      localStorage.setItem('token', token);
+
+      const { data } = await authAPI.checkBroadcaster();
+      user.isBroadcaster = data;
 
       return user;
     } catch (err) {
@@ -48,10 +51,12 @@ const getMe = createAsyncThunk<User, undefined, { rejectValue: FieldError[] }>(
   async (_, thunkAPI) => {
     try {
       const user = await authAPI.getMe();
+      const { data } = await authAPI.checkBroadcaster();
+      user.isBroadcaster = data;
 
       return user;
     } catch (err) {
-      thunkAPI.dispatch(logout());
+      await thunkAPI.dispatch(logout());
       return thunkAPI.rejectWithValue(err);
     }
   }
@@ -64,6 +69,8 @@ const logout = createAsyncThunk<
 >('auth:logout', async (_, thunkAPI) => {
   try {
     await authAPI.logout();
+
+    localStorage.removeItem('token');
   } catch (err) {
     return thunkAPI.rejectWithValue(err);
   }

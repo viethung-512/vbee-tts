@@ -11,8 +11,6 @@ import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import usePermission from 'hooks/usePermission';
-import useModal from 'hooks/useModal';
-import { modalActionTypes } from 'app/utils/constants';
 import Button from 'app/layout/commons/form/Button';
 import { User } from 'app/types/user';
 
@@ -20,7 +18,9 @@ interface Props {
   isValid: boolean;
   loading: boolean;
   submitting: boolean;
+  deleting: boolean;
   submitForm: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  handleDelete: () => void;
   user?: User;
   userId?: string;
 }
@@ -36,15 +36,16 @@ const UserDetailsHeader: React.FC<Props> = ({
   isValid,
   loading,
   submitting,
+  deleting,
   userId,
   user,
   submitForm,
+  handleDelete,
 }) => {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
   const classes = useStyles();
   const theme = useTheme();
   const { canCreateUser, canUpdateUser, canDeleteUser } = usePermission();
-  const { openModal } = useModal();
 
   const isShowSubmitButton = userId ? canUpdateUser : canCreateUser;
 
@@ -84,12 +85,10 @@ const UserDetailsHeader: React.FC<Props> = ({
                 variant='secondary'
                 disabled={submitting}
                 style={{ marginRight: theme.spacing(2) }}
-                onClick={() =>
-                  openModal('ConfirmModal', {
-                    data: { id: userId },
-                    type: modalActionTypes.DELETE_USER,
-                  })
-                }
+                onClick={() => {
+                  handleDelete();
+                }}
+                loading={deleting}
               />
             )}
           </Grid>

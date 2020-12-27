@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import clsx from 'clsx';
@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    [theme.breakpoints.down('sm')]: {
+      width: 0,
+    },
   },
   drawerClose: {
     transition: theme.transitions.create('width', {
@@ -73,6 +76,13 @@ const Sidebar: React.FC<Props> = ({ open }) => {
     return location.pathname;
   });
 
+  useEffect(() => {
+    if (location.pathname) {
+      const selected = location.pathname;
+      setItemSelected(selected);
+    }
+  }, [location.pathname]);
+
   const handleClick = (item: string, hasChild: boolean) => {
     if (hasChild) {
       const newData = {
@@ -86,44 +96,48 @@ const Sidebar: React.FC<Props> = ({ open }) => {
   };
 
   const handleMenu = (children: SidebarItem[], level: number = 0) => {
-    return children.map(({ children, icon, name, path, label }) => {
+    return children.map(({ children, icon, name, path, label, permission }) => {
       if (!children) {
         return (
-          <List key={name} component='div' disablePadding dense>
-            <SidebarMenuItem
-              icon={icon}
-              isSelected={name === itemSelected}
-              hasChild={false}
-              isChild={level > 0}
-              isOpen={Boolean(menu[name])}
-              sidebarOpen={open}
-              primary={label}
-              to={path}
-              onClick={() => handleClick(name, false)}
-            />
-          </List>
+          permission && (
+            <List key={name} component='div' disablePadding dense>
+              <SidebarMenuItem
+                icon={icon}
+                isSelected={name === itemSelected}
+                hasChild={false}
+                isChild={level > 0}
+                isOpen={Boolean(menu[name])}
+                sidebarOpen={open}
+                primary={label}
+                to={path}
+                onClick={() => handleClick(name, false)}
+              />
+            </List>
+          )
         );
       }
 
       const collapseOpen = menu[name];
 
       return (
-        <div key={name}>
-          <SidebarMenuItem
-            icon={icon}
-            isSelected={name === itemSelected}
-            hasChild={true}
-            isChild={level > 0}
-            isOpen={Boolean(menu[name])}
-            sidebarOpen={open}
-            primary={label}
-            to={path}
-            onClick={() => handleClick(name, true)}
-          />
-          <Collapse in={collapseOpen} timeout='auto' unmountOnExit>
-            {handleMenu(children, 1)}
-          </Collapse>
-        </div>
+        permission && (
+          <div key={name}>
+            <SidebarMenuItem
+              icon={icon}
+              isSelected={name === itemSelected}
+              hasChild={true}
+              isChild={level > 0}
+              isOpen={Boolean(menu[name])}
+              sidebarOpen={open}
+              primary={label}
+              to={path}
+              onClick={() => handleClick(name, true)}
+            />
+            <Collapse in={collapseOpen} timeout='auto' unmountOnExit>
+              {handleMenu(children, 1)}
+            </Collapse>
+          </div>
+        )
       );
     });
   };
@@ -150,24 +164,36 @@ const Sidebar: React.FC<Props> = ({ open }) => {
         />
       </div>
       <Divider />
-      {sidebarMenus.map(menu => (
-        <List
-          key={menu.name}
-          disablePadding
-          dense
-          subheader={
-            <ListSubheader component='div'>
-              {open ? (
-                menu.name
-              ) : (
-                <Divider style={{ marginTop: 16, marginBottom: 16 }} />
-              )}
-            </ListSubheader>
-          }
-        >
-          {handleMenu(menu.data)}
-        </List>
-      ))}
+      {sidebarMenus
+        .filter(menu => {
+          return menu.data.some(d => {
+            if (d.children && d.children.length > 0) {
+              return d.children.some(c => c.permission);
+            }
+
+            return d.permission;
+          });
+        })
+        .map(menu => {
+          return (
+            <List
+              key={menu.name}
+              disablePadding
+              dense
+              subheader={
+                <ListSubheader component='div'>
+                  {open ? (
+                    menu.name
+                  ) : (
+                    <Divider style={{ marginTop: 16, marginBottom: 16 }} />
+                  )}
+                </ListSubheader>
+              }
+            >
+              {handleMenu(menu.data)}
+            </List>
+          );
+        })}
     </Drawer>
   );
 };

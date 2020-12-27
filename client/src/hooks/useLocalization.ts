@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 function useLocalization() {
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
 
   const materialTable = {
     toolbar: {

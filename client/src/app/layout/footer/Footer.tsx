@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 
 const Footer: React.FC = props => {
   const classes = useStyles();
-  const { t } = useTranslation();
+  const { t }: { t: any } = useTranslation();
 
   return (
     <footer className={classes.footer}>
