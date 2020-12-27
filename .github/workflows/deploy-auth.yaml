@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'auth/**'
+    # paths:
+    #   - 'auth/**'
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
