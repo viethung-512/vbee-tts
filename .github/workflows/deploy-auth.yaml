@@ -19,11 +19,8 @@ jobs:
         uses: google-github-actions/setup-gcloud@master
         with:
           version: '290.0.1'
-          service_account_key: $GKE_SA_KEY
-          project_id: $GKE_PROJECT
-        env:
-          GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
-          GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
 
       - name: Configure Docker use gcloud command-line tool as a credential
         run: gcloud --quiet auth configure-docker
