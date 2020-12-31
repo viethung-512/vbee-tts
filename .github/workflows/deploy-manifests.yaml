@@ -1,15 +1,13 @@
-name: deploy-auth
+name: deploy-manifests
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'auth/**'
-
+      - 'infra/**'
 jobs:
   build:
-    name: build-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,18 +32,5 @@ jobs:
           GKE_CLUSTER: tts-prod
           GKE_ZONE: southamerica-east1-b
 
-      # Build the Docker image
-      - name: Build docker image
-        run: cd auth && docker build -t viethung512/auth:$GITHUB_SHA .
-
-      - name: Login to dockerhub
-        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Push to dockerhub
-        run: docker push "viethung512/auth:$GITHUB_SHA"
-
-      - name: Restart auth-depl
-        run: kubectl rollout restart deployment auth-depl
+      - name: Apply manifests
+        run: kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod

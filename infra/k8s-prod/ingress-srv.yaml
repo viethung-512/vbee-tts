@@ -1,0 +1,53 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  rules:
+    - host: 'tts-app.hung97.com'
+      http:
+        paths:
+          # auth service
+          - path: /api/auth/?(.*)
+            backend:
+              serviceName: auth-srv
+              servicePort: 4000
+          - path: /api/users/?(.*)
+            backend:
+              serviceName: auth-srv
+              servicePort: 4000
+          - path: /api/roles/?(.*)
+            backend:
+              serviceName: auth-srv
+              servicePort: 4000
+
+          # data service
+          - path: /api/broadcaster/?(.*)
+            backend:
+              serviceName: data-srv
+              servicePort: 4000
+          - path: /api/sentences/?(.*)
+            backend:
+              serviceName: data-srv
+              servicePort: 4000
+          - path: /api/records/?(.*)
+            backend:
+              serviceName: data-srv
+              servicePort: 4000
+          - path: /api/voices/?(.*)
+            backend:
+              serviceName: data-srv
+              servicePort: 4000
+          - path: /api/allophone/?(.*)
+            backend:
+              serviceName: data-srv
+              servicePort: 4000
+
+          # client
+          # - path: /?(.*)
+          #   backend:
+          #     serviceName: client-srv
+          #     servicePort: 3000
