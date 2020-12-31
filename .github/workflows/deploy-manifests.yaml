@@ -29,5 +29,11 @@ jobs:
           GKE_CLUSTER: tts-prod
           GKE_ZONE: southamerica-east1-b
 
+      - name: Login to dockerhub
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Apply manifests
         run: kubectl apply -f infra/k8s-prod
