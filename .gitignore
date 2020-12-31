@@ -4,6 +4,12 @@ common/
 
 secret.ts
 
+side-bar/
+
+client-backup/
+
+test-import/
+
 .env
 
 *.txt

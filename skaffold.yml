@@ -6,5 +6,55 @@ deploy:
       - ./infra/k8s/*
 
 build:
-  local:
-    push: false
+  # local:
+  #   push: false
+  googleCloudBuild:
+    projectId: vbee-tts-297514
+  artifacts:
+    # - image: viethung512/tts_auth
+    - image: us.gcr.io/vbee-tts-297514/auth
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    # - image: viethung512/tts_data
+    - image: us.gcr.io/vbee-tts-297514/data
+      context: data
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    # - image: viethung512/tts_static
+    # - image: us.gcr.io/vbee-tts-297514/static
+    #   context: static
+    #   docker:
+    #     dockerfile: Dockerfile
+    #   sync:
+    #     manual:
+    #       - src: 'src/**/*.ts'
+    #         dest: .
+    # - image: viethung512/tts_worker
+    - image: us.gcr.io/vbee-tts-297514/worker
+      context: worker
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    # - image: viethung512/tts_client
+    # - image: us.gcr.io/vbee-tts-297514/client
+    #   context: client
+    #   docker:
+    #     dockerfile: Dockerfile
+    #   sync:
+    #     manual:
+    #       - src: '**/*.ts'
+    #         dest: .
+    #       - src: '**/*.tsx'
+    #         dest: .
