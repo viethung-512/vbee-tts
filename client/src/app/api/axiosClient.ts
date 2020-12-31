@@ -2,7 +2,7 @@ import axios from 'axios';
 import queryString from 'query-string';
 
 const axiosClient = axios.create({
-  baseURL: 'http://tts-api.hung97.com',
+  baseURL: 'http://tts-app.hung97.com',
   headers: {
     'content-type': 'application/json',
   },
