@@ -36,7 +36,7 @@ jobs:
 
       # Build the Docker image
       - name: Build docker image
-        run: cd auth && docker build -t viethung512/auth:$GITHUB_SHA .
+        run: cd auth && docker build -t viethung512/tts_auth:$GITHUB_SHA .
 
       - name: Login to dockerhub
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
