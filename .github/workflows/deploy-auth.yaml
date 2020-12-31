@@ -42,7 +42,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push to dockerhub
-        run: docker push "viethung512/auth:$GITHUB_SHA"
+        run: docker push "viethung512/tts_auth:$GITHUB_SHA"
 
       - name: Restart auth-depl
         run: kubectl rollout restart deployment auth-depl
