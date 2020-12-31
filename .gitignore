@@ -4,8 +4,6 @@ common/
 
 secret.ts
 
-.next
-
 side-bar/
 
 client-backup/
@@ -15,3 +13,5 @@ test-import/
 .env
 
 *.txt
+
+vbee-tts-297514-ecc6f004cad3.json

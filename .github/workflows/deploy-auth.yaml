@@ -1,0 +1,48 @@
+name: deploy-auth
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'auth/**'
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
+  GKE_CLUSTER: tts
+  GKE_ZONE: us-central1-c
+  DEPLOYMENT_NAME: auth
+  IMAGE: auth
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+jobs:
+  build:
+    name: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Setup gcloud CLI
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+      # Configure Docker to use the gcloud command-line tool as a credential
+      # helper for authentication
+      - run: |-
+          gcloud --quiet auth configure-docker
+      # Get the GKE credentials so we can deploy to the cluster
+      - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+      # Build the Docker image
+      - name: Build docker image
+        run: cd auth && docker build -t viethung512/auth:$GITHUB_SHA .
+      - name: Login to dockerhub
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - name: Push to dockerhub
+        run: docker push "viethung512/auth:$GITHUB_SHA"
+        
+      - name: Restart auth-depl
+        run: kubectl rollout restart deployment auth-depl
