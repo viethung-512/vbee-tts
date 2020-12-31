@@ -30,4 +30,4 @@ jobs:
           GKE_ZONE: southamerica-east1-b
 
       - name: Apply manifests
-        run: kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod
+        run: kubectl apply -f infra/k8s-prod
