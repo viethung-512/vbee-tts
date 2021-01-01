@@ -6,6 +6,7 @@ import { SentenceSubmittedListener } from './events/listeners/sentence-submitted
 
 const start = () => {
   const { nats, port } = getEnv();
+  console.log('Starting...');
   console.log(`Listening on port ${port}...`);
 
   natsWrapper
