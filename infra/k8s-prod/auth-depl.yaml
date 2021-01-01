@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: viethung512/tts_auth
+          image: viethung512/tts_auth:TAG
           env:
             - name: PORT
               value: '4000'
