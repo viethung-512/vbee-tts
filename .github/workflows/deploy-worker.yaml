@@ -1,15 +1,15 @@
-name: deploy-auth
+name: deploy-worker
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'auth/**'
+      - 'worker/**'
 
 jobs:
   build:
-    name: Build Auth Service
+    name: Build Worker Service
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,7 +33,7 @@ jobs:
 
       # Build the Docker image
       - name: Build docker image
-        run: cd auth && docker build -t viethung512/tts_auth .
+        run: cd worker && docker build -t viethung512/tts_worker .
 
       - name: Login to dockerhub
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
@@ -42,10 +42,10 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push to dockerhub
-        run: docker push "viethung512/tts_auth"
+        run: docker push "viethung512/tts_worker"
 
       - name: Apply deployment
-        run: kubectl apply -f infra/k8s-prod/auth-depl.yaml
+        run: kubectl apply -f infra/k8s-prod/worker-depl.yaml
 
       - name: Restart
-        run: kubectl rollout restart deployment auth-depl
+        run: kubectl rollout restart deployment worker-depl
