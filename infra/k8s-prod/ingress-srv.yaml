@@ -46,8 +46,8 @@ spec:
               serviceName: data-srv
               servicePort: 4000
 
-          # client
-          # - path: /?(.*)
-          #   backend:
-          #     serviceName: client-srv
-          #     servicePort: 3000
+          client
+          - path: /?(.*)
+            backend:
+              serviceName: client-srv
+              servicePort: 4000
