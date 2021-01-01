@@ -44,5 +44,8 @@ jobs:
       - name: Push to dockerhub
         run: docker push "viethung512/tts_auth:$GITHUB_SHA"
 
+      - name: Apply deployment
+        run: kubectl apply -f infra/k8s-prod/auth-depl.yaml
+
       - name: Restart auth-depl
         run: kubectl rollout restart deployment auth-depl
