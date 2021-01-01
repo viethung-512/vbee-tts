@@ -5,7 +5,7 @@ import { getEnv } from './configs/env-config';
 
 const start = async () => {
   const { nats, port } = getEnv();
-  console.log('Starting...');
+  console.log('Starting......');
 
   try {
     await natsWrapper.connect(nats.clusterId, nats.clientId, nats.url);
