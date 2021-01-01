@@ -1,57 +1,40 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-depl
+  name: data-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: data
   template:
     metadata:
       labels:
-        app: auth
+        app: data
     spec:
       containers:
-        - name: auth
-          image: viethung512/tts_auth
+        - name: data
+          image: viethung512/tts_data
           env:
             - name: PORT
               value: '4000'
-
             - name: MONGO_HOST
               value: '104.154.106.47'
             - name: MONGO_PORT
               value: '27017'
             - name: MONGO_DATABASE
-              value: 'tts_auth'
+              value: 'tts_data'
             - name: MONGO_USERNAME
               value: 'admin'
             - name: MONGO_PASSWORD
               value: 'admin123'
-
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_SECRET
-            - name: ROOT_USER_USERNAME
-              value: 'admin'
-            - name: ROOT_USER_EMAIL
-              value: 'admin@test.com'
-            - name: ROOT_USER_PHONE_NUMBER
-              value: '0987654321'
-            - name: ROOT_USER_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: root-password
-                  key: ROOT_USER_PASSWORD
-
-            - name: HOST_URL
-              value: 'http://tts-api.hung97.com'
-            - name: STATIC_HOST
-              value: 'http://tts-static.hung97.com'
-
+            - name: STATIC_URL
+              value: 'http://tts-static.hung97.com/static/resource'
             - name: NATS_CLIENT_ID
               valueFrom:
                 fieldRef:
@@ -60,20 +43,18 @@ spec:
               value: 'http://nats-srv:4222'
             - name: NATS_CLUSTER_ID
               value: 'tts'
-      hostAliases:
-        - ip: '34.95.243.245'
-          hostnames:
-            - 'tts-app.hung97.com'
+            - name: HOST_URL
+              value: 'http://tts-api.hung97.com'
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-srv
+  name: data-srv
 spec:
   selector:
-    app: auth
+    app: data
   ports:
-    - name: auth
+    - name: data
       protocol: TCP
       port: 4000
       targetPort: 4000
