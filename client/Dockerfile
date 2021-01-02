@@ -6,7 +6,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-RUN sudo rm -rf /app/.env
+RUN rm -rf /app/.env
 RUN npm run build
 
 EXPOSE 4000
