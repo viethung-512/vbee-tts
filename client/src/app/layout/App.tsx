@@ -3,6 +3,7 @@ import './App.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConfirmProvider } from 'material-ui-confirm';
 import { useTranslation } from 'react-i18next';
+import { io } from 'socket.io-client';
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,6 +14,11 @@ import AppRoutes from './AppRoutes';
 import { getMe } from 'features/auth/authSlice';
 import { AppDispatch } from 'app/redux/store';
 import { AppState, AuthState } from 'app/redux/rootReducer';
+
+// const socket = io('http://tts-api.hung97.com/app-sockets', {
+//   secure: true,
+//   transports: ['websocket', 'polling'],
+// });
 
 const useStyles = makeStyles(theme => ({
   btnRoot: {
@@ -41,6 +47,13 @@ const App: React.FC = props => {
 
     fetchAuthUser();
   }, [dispatch]);
+
+  // useEffect(() => {
+  //   socket.on('FromAPI', () => {
+  //     console.log('form API');
+  //   });
+  //   socket.emit('FromAPI', 'from api here');
+  // }, []);
 
   return (
     <div className='App'>

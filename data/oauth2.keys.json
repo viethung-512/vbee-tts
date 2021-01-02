@@ -1,8 +1,0 @@
-{
-  "web": {
-    "redirect_uris": ["http://localhost:3000/oauth2callback"],
-    "client_id": "1054397675574-sk9s0epphq5oghf33afi9n2ler3re6l7.apps.googleusercontent.com",
-    "client_secret": "kE_yCQxrDF6T-CG4ef56sP4q",
-    "project_id": "vbee-tts-1603902612444"
-  }
-}

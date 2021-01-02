@@ -12,12 +12,9 @@ import {
   googleDriverBaseURI,
   initDrive,
 } from '../../configs/gg-driver/oAuth-config';
-import { GGDriverInitializedPublisher } from '../../events/publishers/gg-driver-initialized-publisher';
-import { natsWrapper } from '../../nats-wrapper';
-import { FileDownloadedPublisher } from '../../events/publishers/file-downloaded-publisher';
 import { ServiceResponse } from '@tts-dev/common';
 
-const { hostURL } = getEnv();
+const { hostURL, staticHost } = getEnv();
 
 interface DownloadFileResponse extends ServiceResponse {
   files?: string[];
@@ -49,12 +46,8 @@ const progressDownloadFile = ({
         const percent = getPercent({ total, current });
 
         const progress = { total, current, percent };
-        // pubsub.publish(FILE_DOWNLOADING, { fileDownloading: progress });
-        await new FileDownloadedPublisher(natsWrapper.client).publish({
-          total: progress.total,
-          current: progress.current,
-          percent: progress.percent,
-        });
+
+        console.log({ progress });
       })
       .on('end', () => {
         console.log('Done downloading file.');
@@ -80,10 +73,6 @@ async function downloadFile(shareLink: string): Promise<DownloadFileResponse> {
   console.log('start download file');
 
   try {
-    await new GGDriverInitializedPublisher(natsWrapper.client).publish({
-      initialized: true,
-    });
-
     const fileId = getFileId(shareLink);
 
     const {
@@ -109,16 +98,20 @@ async function downloadFile(shareLink: string): Promise<DownloadFileResponse> {
     form.append('file', fs.createReadStream(filePath));
 
     const { data } = await axios.post(
-      `${hostURL}/api/static/upload-audio`,
+      `${staticHost}/api/static/upload-audio`,
+      // `http://localhost:3000/upload-audio`,
       form,
       {
         headers: { ...form.getHeaders() },
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
       }
     );
 
     fs.unlinkSync(filePath);
 
     console.log('end download file');
+    console.log(data);
 
     return {
       success: true,

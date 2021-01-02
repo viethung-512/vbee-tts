@@ -33,5 +33,5 @@ app.all('*', async () => {
 });
 
 app.listen(port, () => {
-  console.log(`Listening on port ${port}...`);
+  console.log(`Listening on port ${port}......`);
 });

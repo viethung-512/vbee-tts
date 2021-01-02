@@ -1,13 +1,21 @@
 import React from 'react';
 
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import {
+  makeStyles,
+  Theme,
+  createStyles,
+  useTheme,
+} from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+
+import LinearProgressWithLabel from 'app/layout/commons/async/LinearProgressWithLabel';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,6 +41,11 @@ export interface BaseStepContentType {
   content: string;
   isError: boolean;
   errorMessage?: string;
+  steps?: {
+    label: string;
+    status: boolean;
+    progress?: number;
+  }[];
 }
 
 interface Props {
@@ -49,6 +62,7 @@ const BaseStepContent: React.FC<Props> = ({
   setSteps,
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
 
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -88,42 +102,85 @@ const BaseStepContent: React.FC<Props> = ({
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} orientation='vertical'>
-        {steps.map(({ index, isError, errorMessage, label, content }) => (
-          <Step key={content}>
-            <StepLabel error={isError}>{label}</StepLabel>
-            <StepContent>
-              {isError ? (
-                <Typography color='error'>{errorMessage}</Typography>
-              ) : (
-                <Typography>{content}</Typography>
-              )}
-
-              <div className={classes.actionsContainer}>
-                <div>
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    className={classes.button}
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    variant='contained'
-                    color='primary'
-                    onClick={() => handleTraining(isError, index)}
-                    className={classes.button}
-                  >
-                    {isError
-                      ? 'Fix Bug'
-                      : activeStep === steps.length - 1
-                      ? 'Finish'
-                      : 'Start Training'}
-                  </Button>
-                </div>
-              </div>
-            </StepContent>
-          </Step>
-        ))}
+        {steps.map(
+          ({
+            index,
+            isError,
+            errorMessage,
+            label,
+            content,
+            steps: childrenSteps,
+          }) => {
+            console.log({ childrenSteps });
+            return (
+              <Step key={content}>
+                <StepLabel error={isError}>
+                  <Grid container direction='column'>
+                    <Grid item container>
+                      {label}
+                    </Grid>
+                    {childrenSteps && childrenSteps.length > 0 && (
+                      <Grid
+                        item
+                        container
+                        style={{ marginTop: theme.spacing(2) }}
+                      >
+                        {childrenSteps.map(st => (
+                          <Grid item container key={st.label}>
+                            <Grid item xs={2}>
+                              <Typography
+                                variant='body2'
+                                color='textSecondary'
+                                gutterBottom={false}
+                              >
+                                {st.label}
+                              </Typography>
+                            </Grid>
+                            {st.status && (
+                              <Grid item xs={10}>
+                                <LinearProgressWithLabel value={st.progress!} />
+                              </Grid>
+                            )}
+                          </Grid>
+                        ))}
+                      </Grid>
+                    )}
+                  </Grid>
+                </StepLabel>
+                <StepContent>
+                  {isError ? (
+                    <Typography color='error'>{errorMessage}</Typography>
+                  ) : (
+                    <Typography>{content}</Typography>
+                  )}
+                  <div className={classes.actionsContainer}>
+                    <div>
+                      <Button
+                        disabled={activeStep === 0}
+                        onClick={handleBack}
+                        className={classes.button}
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        variant='contained'
+                        color='primary'
+                        onClick={() => handleTraining(isError, index)}
+                        className={classes.button}
+                      >
+                        {isError
+                          ? 'Fix Bug'
+                          : activeStep === steps.length - 1
+                          ? 'Finish'
+                          : 'Start Training'}
+                      </Button>
+                    </div>
+                  </div>
+                </StepContent>
+              </Step>
+            );
+          }
+        )}
       </Stepper>
       {activeStep === steps.length && (
         <Paper square elevation={0} className={classes.resetContainer}>

@@ -10,6 +10,23 @@ const KaldiStep: React.FC = () => {
       label: 'Prepare Text',
       content: 'Progress of Prepare Text step',
       isError: false,
+      steps: [
+        {
+          label: 'Prepare Text Step1',
+          status: true,
+          progress: 100,
+        },
+        {
+          label: 'Prepare Text Step2',
+          status: true,
+          progress: 100,
+        },
+        {
+          label: 'Prepare Text Step3',
+          status: true,
+          progress: 34,
+        },
+      ],
     },
     {
       index: 1,

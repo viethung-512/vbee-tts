@@ -47,6 +47,7 @@
     "node-nats-streaming": "^0.3.2",
     "read-excel-file": "^4.1.0",
     "server-destroy": "^1.0.1",
+    "socket.io": "^3.0.4",
     "unzipper": "^0.10.11",
     "uuid": "^8.3.1"
   }

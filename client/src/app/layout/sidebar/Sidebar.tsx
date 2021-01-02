@@ -97,13 +97,15 @@ const Sidebar: React.FC<Props> = ({ open }) => {
 
   const handleMenu = (children: SidebarItem[], level: number = 0) => {
     return children.map(({ children, icon, name, path, label, permission }) => {
+      const isSelected = itemSelected.includes(name);
+
       if (!children) {
         return (
           permission && (
             <List key={name} component='div' disablePadding dense>
               <SidebarMenuItem
                 icon={icon}
-                isSelected={name === itemSelected}
+                isSelected={isSelected}
                 hasChild={false}
                 isChild={level > 0}
                 isOpen={Boolean(menu[name])}
@@ -124,7 +126,7 @@ const Sidebar: React.FC<Props> = ({ open }) => {
           <div key={name}>
             <SidebarMenuItem
               icon={icon}
-              isSelected={name === itemSelected}
+              isSelected={isSelected}
               hasChild={true}
               isChild={level > 0}
               isOpen={Boolean(menu[name])}

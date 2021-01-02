@@ -20,12 +20,6 @@ app.use(cors());
 app.use(fileUpload());
 app.set('trust proxy', true);
 app.use(json());
-// app.use(
-//   cookieSession({
-//     signed: false,
-//     // secure: process.env.NODE_ENV !== 'test',
-//   })
-// );
 
 app.use('/api/sentences', sentenceRoute);
 app.use('/api/records', recordRoute);

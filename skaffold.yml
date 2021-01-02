@@ -3,7 +3,6 @@ kind: Config
 deploy:
   kubectl:
     manifests:
-      - ./infra/k8s/*
       - ./infra/k8s-dev/*
 
 build:
@@ -30,16 +29,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    # - image: viethung512/tts_static
-    # - image: us.gcr.io/vbee-tts-297514/static
-    #   context: static
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: 'src/**/*.ts'
-    #         dest: .
-    # - image: viethung512/tts_worker
+
     - image: us.gcr.io/vbee-tts-297514/worker
       context: worker
       docker:
@@ -48,14 +38,3 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    # - image: viethung512/tts_client
-    # - image: us.gcr.io/vbee-tts-297514/client
-    #   context: client
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: '**/*.ts'
-    #         dest: .
-    #       - src: '**/*.tsx'
-    #         dest: .

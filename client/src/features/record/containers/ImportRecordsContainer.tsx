@@ -9,6 +9,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
+import ShareIcon from '@material-ui/icons/Share';
+
 import useAlert from 'hooks/useAlert';
 import useMutation from 'hooks/useMutation';
 import Input from 'app/layout/commons/form/Input';
@@ -103,6 +105,7 @@ const ImportRecordsContainer: React.FC<Props> = ({ history }) => {
                 control={control}
                 isError={Boolean(errors?.shareLink)}
                 errorMessage={errors?.shareLink?.message}
+                endIcon={<ShareIcon />}
               />
             </Grid>
             <Grid item>

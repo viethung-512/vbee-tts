@@ -103,7 +103,7 @@ function useSidebar() {
       },
       {
         label: t('SIDEBAR_MENU_ITEM__MANAGE_TRAINING'),
-        name: 'trainings',
+        name: 'manage_trainings',
         // path: '/trainings',
         icon: <SettingsVoiceIcon />,
         permission: isRootUser,
