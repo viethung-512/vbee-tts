@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data
+  template:
+    metadata:
+      labels:
+        app: data
+    spec:
+      containers:
+        - name: data
+          # image: viethung512/tts_data
+          image: us.gcr.io/vbee-tts-297514/data
+          env:
+            - name: PORT
+              value: '4000'
+            - name: MONGO_HOST
+              value: '104.154.106.47'
+            - name: MONGO_PORT
+              value: '27017'
+            - name: MONGO_DATABASE
+              value: 'tts_data'
+            - name: MONGO_USERNAME
+              value: 'admin'
+            - name: MONGO_PASSWORD
+              value: 'admin123'
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+            - name: STATIC_URL
+              value: 'http://tts-static.hung97.com/static/resource'
+            - name: STATIC_HOST
+              value: 'http://tts-static.hung97.com'
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID
+              value: 'tts'
+            - name: HOST_URL
+              value: 'http://tts-api.hung97.com'
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-srv
+spec:
+  selector:
+    app: data
+  ports:
+    - name: data
+      protocol: TCP
+      port: 4000
+      targetPort: 4000

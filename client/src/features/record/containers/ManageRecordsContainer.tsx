@@ -49,40 +49,44 @@ const ManageRecordsContainer: React.FC<Props> = ({ history }) => {
     confirm({ description: t('WARNING_DELETE_RECORD') })
       .then(() => {
         setLoading(true);
-        return recordAPI.deleteRecords(ids);
-      })
-      .then(sentences => {
-        console.log(sentences);
-        alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
-        history.push('/sentences');
+        return recordAPI
+          .deleteRecords(ids)
+          .then(sentences => {
+            console.log(sentences);
+            alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
+            history.push('/sentences');
 
-        setLoading(false);
+            setLoading(false);
+          })
+          .catch(err => {
+            console.log(err);
+            alertError(t('MESSAGE_ALERT_ERROR'));
+            setLoading(false);
+          });
       })
-      .catch(err => {
-        console.log(err);
-        alertError(t('MESSAGE_ALERT_ERROR'));
-        setLoading(false);
-      });
+      .catch(err => console.log(err));
   };
 
   const handleApprove = (ids: string[]) => {
     confirm({ description: t('WARNING_APPROVE_RECORD') })
       .then(() => {
         setLoading(true);
-        return recordAPI.approveRecords(ids);
-      })
-      .then(sentences => {
-        console.log(sentences);
-        alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
-        history.push('/sentences');
+        return recordAPI
+          .approveRecords(ids)
+          .then(sentences => {
+            console.log(sentences);
+            alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
+            history.push('/sentences');
 
-        setLoading(false);
+            setLoading(false);
+          })
+          .catch(err => {
+            console.log(err);
+            alertError(t('MESSAGE_ALERT_ERROR'));
+            setLoading(false);
+          });
       })
-      .catch(err => {
-        console.log(err);
-        alertError(t('MESSAGE_ALERT_ERROR'));
-        setLoading(false);
-      });
+      .catch(err => console.log(err));
   };
 
   const voiceMarkup = (rowData: RowData) => (
@@ -110,7 +114,7 @@ const ManageRecordsContainer: React.FC<Props> = ({ history }) => {
           tooltip: t('ACTIONS_ASSIGN'),
           icon: () => <AssignmentIcon color='primary' />,
           onClick: (evt, data) => {
-            openModal('AutoAssignRecordsModal');
+            openModal('AssignRecordModal', { isAutoAssign: true });
           },
           isFreeAction: true,
           hidden: !isRootUser,
@@ -130,7 +134,7 @@ const ManageRecordsContainer: React.FC<Props> = ({ history }) => {
           icon: () => <AssignmentReturnIcon color='primary' />,
           onClick: (evt, data) => {
             const recordIds = (data as RowData[]).map(item => item.id);
-            openModal('AssignRecordsModal', { recordIds });
+            openModal('AssignRecordModal', { recordIds });
           },
           hidden: !isRootUser,
         },

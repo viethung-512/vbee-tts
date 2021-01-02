@@ -22,8 +22,9 @@ const progressUnzipFile = (file: UploadedFile): Promise<string[]> => {
         fs.createReadStream(`${location}/${filename}`)
           .pipe(unzipper.Extract({ path: location }))
           .on('finish', async () => {
-            fs.unlinkSync(pathLocation);
+            fs.unlinkSync(`${pathLocation}/${filename}`);
             const files = await fileService.getAudiosInFolder(pathLocation);
+            // if (files.length === 1 && files[0])
 
             const filesPath = files.map(
               file => `${staticURL}/${location.split('/public/')[1]}/${file}`
@@ -31,8 +32,6 @@ const progressUnzipFile = (file: UploadedFile): Promise<string[]> => {
 
             resolve(filesPath);
           });
-
-        resolve([]);
       })
       .catch(err => {
         reject(err);

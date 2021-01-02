@@ -11,9 +11,9 @@ import { sentenceService } from '../services/sentence-service';
 import { importService } from '../services/import-service';
 
 const getImportSampleFile = (req: Request, res: Response) => {
-  const { hostURL } = getEnv();
+  const { staticHost } = getEnv();
 
-  const importSampleFile = `${hostURL}/static/resource/files/sentences/sample-import-sentence.xlsx`;
+  const importSampleFile = `${staticHost}/static/resource/files/sentences/sample-import-sentence.xlsx`;
 
   return res.status(200).send(importSampleFile);
 };

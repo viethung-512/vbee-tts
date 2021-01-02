@@ -1,30 +1,23 @@
 import path from 'path';
 import { google } from 'googleapis';
 
-import { authenticate } from '@google-cloud/local-auth';
-
-const KEY_FILE_PATH = path.join(__dirname, '../../../client_id.json');
-const SCOPES = [
-  'https://www.googleapis.com/auth/drive',
-  'https://www.googleapis.com/auth/drive.appdata',
-  'https://www.googleapis.com/auth/drive.file',
-  'https://www.googleapis.com/auth/drive.metadata',
-  'https://www.googleapis.com/auth/drive.metadata.readonly',
-  'https://www.googleapis.com/auth/drive.photos.readonly',
-  'https://www.googleapis.com/auth/drive.readonly',
-];
+const credentials = require(path.resolve(
+  __dirname,
+  '../../../credentials.json'
+));
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
 const googleDriverBaseURI = 'https://drive.google.com/file/d/';
 
 const initDrive = async () => {
-  console.log('start init drive');
-  const auth = await authenticate({
-    keyfilePath: KEY_FILE_PATH,
-    scopes: SCOPES,
-  });
-  google.options({ auth });
+  const auth = new google.auth.JWT(
+    credentials.client_email,
+    undefined,
+    credentials.private_key,
+    SCOPES
+  );
 
-  const drive = google.drive('v3');
+  const drive = google.drive({ version: 'v3', auth });
 
   return drive;
 };

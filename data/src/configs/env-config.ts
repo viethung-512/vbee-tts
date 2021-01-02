@@ -28,6 +28,9 @@ export const getEnv = () => {
   if (!process.env.STATIC_URL) {
     throw new Error('STATIC_URL must be defined');
   }
+  if (!process.env.STATIC_HOST) {
+    throw new Error('STATIC_HOST must be defined');
+  }
   if (!process.env.NATS_CLIENT_ID) {
     throw new Error('NATS_CLIENT_ID must be defined');
   }
@@ -50,6 +53,7 @@ export const getEnv = () => {
     },
     jwtSecret: process.env.JWT_SECRET,
     staticURL: process.env.STATIC_URL,
+    staticHost: process.env.STATIC_HOST,
     nats: {
       clusterId: process.env.NATS_CLUSTER_ID,
       clientId: process.env.NATS_CLIENT_ID,

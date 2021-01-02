@@ -52,40 +52,44 @@ const ManageSentencesContainer: React.FC<Props> = ({ history }) => {
     confirm({ description: t('WARNING_APPROVE_SENTENCE') })
       .then(() => {
         setLoading(true);
-        return sentenceAPI.approveSentences(ids);
-      })
-      .then(sentences => {
-        console.log(sentences);
-        alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
-        history.push('/sentences');
+        return sentenceAPI
+          .approveSentences(ids)
+          .then(sentences => {
+            console.log(sentences);
+            alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
+            history.push('/sentences');
 
-        setLoading(false);
+            setLoading(false);
+          })
+          .catch(err => {
+            console.log(err);
+            alertError(t('MESSAGE_ALERT_ERROR'));
+            setLoading(false);
+          });
       })
-      .catch(err => {
-        console.log(err);
-        alertError(t('MESSAGE_ALERT_ERROR'));
-        setLoading(false);
-      });
+      .catch(err => console.log(err));
   };
 
   const handleDelete = async (ids: string[]) => {
     confirm({ description: t('WARNING_DELETE_SENTENCE') })
       .then(() => {
         setLoading(true);
-        return sentenceAPI.deleteSentences(ids);
-      })
-      .then(sentences => {
-        console.log(sentences);
-        alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
-        history.push('/sentences');
+        return sentenceAPI
+          .deleteSentences(ids)
+          .then(sentences => {
+            console.log(sentences);
+            alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
+            history.push('/sentences');
 
-        setLoading(false);
+            setLoading(false);
+          })
+          .catch(err => {
+            console.log(err);
+            alertError(t('MESSAGE_ALERT_ERROR'));
+            setLoading(false);
+          });
       })
-      .catch(err => {
-        console.log(err);
-        alertError(t('MESSAGE_ALERT_ERROR'));
-        setLoading(false);
-      });
+      .catch(err => console.log(err));
   };
 
   const checkerMarkup = (rowData: RowData) => {

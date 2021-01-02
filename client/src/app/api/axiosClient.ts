@@ -1,8 +1,12 @@
 import axios from 'axios';
 import queryString from 'query-string';
 
+const baseURL = process.env.REACT_APP_BASE_API_URL;
+
+console.log({ baseURL });
+
 const axiosClient = axios.create({
-  baseURL: 'http://tts-app.hung97.com',
+  baseURL: baseURL,
   headers: {
     'content-type': 'application/json',
   },

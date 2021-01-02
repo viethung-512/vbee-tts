@@ -165,6 +165,8 @@ const ImportSentencesContainer: React.FC<Props> = ({ history }) => {
   const columns = previewData.length > 0 ? getColumns(previewData) : [];
   const rowData = previewData.length > 0 ? getData(previewData) : [];
 
+  console.log({ sampleFileURL });
+
   return (
     <Fragment>
       {fetching && <LinearProgress color='secondary' />}

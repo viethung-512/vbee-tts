@@ -17,6 +17,7 @@ import { materialTableOptions } from 'app/configs/material-table';
 import useLocalization from 'hooks/useLocalization';
 import broadcasterAPI from 'app/api/broadcasterAPI';
 import { Broadcaster } from 'app/types/broadcaster';
+import LinearProgressWithLabel from 'app/layout/commons/async/LinearProgressWithLabel';
 
 interface RowData extends Broadcaster {}
 
@@ -44,18 +45,20 @@ const ManageBroadcasterContainer: React.FC<Props> = ({ history }) => {
     confirm({ description: t('WARNING_DELETE_BROADCASTER') })
       .then(() => {
         setLoading(true);
-        return broadcasterAPI.deleteBroadcasters(ids);
+        return broadcasterAPI
+          .deleteBroadcasters(ids)
+          .then(() => {
+            setLoading(false);
+            alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
+            history.push('/broadcasters');
+          })
+          .catch(err => {
+            setLoading(false);
+            console.log(err);
+            alertError(t('MESSAGE_ALERT_ERROR'));
+          });
       })
-      .then(() => {
-        setLoading(false);
-        alertSuccess(t('MESSAGE_ALERT_SUCCESS'));
-        history.push('/broadcasters');
-      })
-      .catch(err => {
-        setLoading(false);
-        console.log(err);
-        alertError(t('MESSAGE_ALERT_ERROR'));
-      });
+      .catch(err => console.log(err));
   };
 
   const columns: Column<RowData>[] = [
@@ -98,9 +101,9 @@ const ManageBroadcasterContainer: React.FC<Props> = ({ history }) => {
                 />
               </Grid>
 
-              {/* <Grid item xs={8}>
-                <LinearProgressWithLabel value={percent} />
-              </Grid> */}
+              <Grid item xs={8}>
+                <LinearProgressWithLabel value={50} />
+              </Grid>
             </Grid>
           );
         });

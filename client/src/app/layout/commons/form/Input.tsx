@@ -14,6 +14,8 @@ type Props = {
   variant?: OutlinedTextFieldProps['variant'];
   isError: boolean;
   errorMessage?: string;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
 };
 
 const Input: React.FC<Props & TextFieldProps> = ({
@@ -24,6 +26,8 @@ const Input: React.FC<Props & TextFieldProps> = ({
   variant = 'outlined',
   isError,
   errorMessage,
+  startIcon,
+  endIcon,
   ...rest
 }) => {
   return (
@@ -36,6 +40,10 @@ const Input: React.FC<Props & TextFieldProps> = ({
           autoComplete='off'
           error={isError}
           helperText={errorMessage}
+          InputProps={{
+            endAdornment: endIcon,
+            startAdornment: startIcon,
+          }}
           {...rest}
         />
       }
