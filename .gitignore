@@ -14,4 +14,4 @@ test-import/
 
 *.txt
 
-credentials.json
+# credentials.json
