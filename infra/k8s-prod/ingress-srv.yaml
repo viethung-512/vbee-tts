@@ -25,7 +25,7 @@ spec:
               servicePort: 4000
 
           # data service
-          - path: /api/broadcaster/?(.*)
+          - path: /api/broadcasters/?(.*)
             backend:
               serviceName: data-srv
               servicePort: 4000
