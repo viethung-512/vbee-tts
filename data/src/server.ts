@@ -9,7 +9,7 @@ import { ScreenshotCreatedListener } from './events/listeners/screenshot-created
 
 const start = async () => {
   const { nats, port } = getEnv();
-  console.log('Starting......');
+  console.log('Starting...');
 
   try {
     await natsWrapper.connect(nats.clusterId, nats.clientId, nats.url);

@@ -35,6 +35,8 @@ spec:
                   key: JWT_SECRET
             - name: STATIC_URL
               value: 'http://tts-static.hung97.com/static/resource'
+            - name: STATIC_HOST
+              value: 'http://tts-static.hung97.com'
             - name: NATS_CLIENT_ID
               valueFrom:
                 fieldRef:
