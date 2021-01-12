@@ -41,6 +41,12 @@ interface BroadcasterDoc extends mongoose.Document {
   voice: Voice;
   dialect: DialectType;
   expiredAt: Date;
+  progresses: {
+    type: SentenceType;
+    total: number;
+    current: number;
+    percent: number;
+  }[];
 }
 
 interface BroadcasterModel extends mongoose.Model<BroadcasterDoc> {

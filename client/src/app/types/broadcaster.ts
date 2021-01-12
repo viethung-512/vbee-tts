@@ -10,6 +10,12 @@ export interface Broadcaster {
   voice: Voice;
   dialect: DialectType;
   expiredAt: string;
+  progresses: {
+    type: SentenceType;
+    total: number;
+    current: number;
+    percent: number;
+  }[];
 }
 
 export interface BroadcasterSentence {

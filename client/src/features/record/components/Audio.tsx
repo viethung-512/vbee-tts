@@ -32,9 +32,9 @@ const Audio: React.FC<Props> = ({ record }) => {
       <Grid container className={classes.container}>
         {record && record.audioURL ? (
           <AudioPlayer
-            autoPlay={false}
+            autoPlay={true}
             src={record.audioURL}
-            autoPlayAfterSrcChange={false}
+            autoPlayAfterSrcChange={true}
             onPlay={e => console.log('onPlay')}
           />
         ) : (

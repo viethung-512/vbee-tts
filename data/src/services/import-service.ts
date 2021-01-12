@@ -17,6 +17,7 @@ import { HistoryDao } from '../daos/history-dao';
 import { UserDao } from '../daos/user-dao';
 import { SentenceDoc } from '../models/sentence';
 import { oAuthService } from './gg-driver/oAuth-service';
+import { RecordDao } from '../daos/record-dao';
 
 interface ImportSentencesResponse extends ServiceResponse {
   sentences?: SentenceDoc[];
@@ -131,9 +132,13 @@ const importSentences = async (
 };
 
 const importAudio = async (
-  shareLink: string
+  shareLink: string,
+  authUserId: string
 ): Promise<ImportRecordResponse> => {
-  console.log('import audio controller');
+  const recordDao = new RecordDao();
+  const historyDao = new HistoryDao();
+  const userDao = new UserDao();
+
   const { success, errors, files } = await oAuthService.downloadFile(shareLink);
 
   console.log('response received');
@@ -141,6 +146,29 @@ const importAudio = async (
   if (!success) {
     return { success: false, errors };
   }
+
+  const user = await userDao.findItem(authUserId);
+
+  await Promise.all(
+    files!.map(async file => {
+      const uid = parseInt(
+        file.split('/')[file.split('/').length - 1].split('.')[0]
+      );
+
+      const record = await recordDao.findItem({ uid });
+      if (record) {
+        const updatedRecord = await recordDao.updateItem(record, {
+          audioURL: file,
+        });
+        await historyDao.createItem({
+          event: HistoryEvent.UPDATE,
+          entity: HistoryEntity.RECORD,
+          user: user!,
+          record: updatedRecord,
+        });
+      }
+    })
+  );
 
   return { success: true, records: files };
 };

@@ -12,8 +12,6 @@ interface Props {
 const RecordDetails: React.FC<Props> = ({ history, match }) => {
   const recordId = match.params.id;
 
-  console.log(recordId);
-
   return (
     <Container style={{ backgroundColor: 'inherit' }}>
       <RecordDetailsContainer recordId={recordId} history={history} />

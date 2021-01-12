@@ -15,9 +15,15 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
   drawerType: string;
+  drawerWidth?: number;
 }
 
-const DrawerBase: React.FC<Props> = ({ children, drawerType, ...rest }) => {
+const DrawerBase: React.FC<Props> = ({
+  children,
+  drawerWidth,
+  drawerType,
+  ...rest
+}) => {
   const classes = useStyles();
   const { getDrawerStatus, closeDrawer } = useDrawer();
 
@@ -38,6 +44,7 @@ const DrawerBase: React.FC<Props> = ({ children, drawerType, ...rest }) => {
       onOpen={() => {}}
       PaperProps={{
         className: classes.paper,
+        style: drawerWidth ? { width: drawerWidth } : undefined,
       }}
       {...rest}
     >

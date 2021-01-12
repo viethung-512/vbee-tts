@@ -79,6 +79,7 @@ const Sidebar: React.FC<Props> = ({ open }) => {
   useEffect(() => {
     if (location.pathname) {
       const selected = location.pathname;
+
       setItemSelected(selected);
     }
   }, [location.pathname]);
@@ -97,7 +98,10 @@ const Sidebar: React.FC<Props> = ({ open }) => {
 
   const handleMenu = (children: SidebarItem[], level: number = 0) => {
     return children.map(({ children, icon, name, path, label, permission }) => {
-      const isSelected = itemSelected.includes(name);
+      const isSelected =
+        itemSelected.split('/').length > 2
+          ? itemSelected.includes(name)
+          : itemSelected === name;
 
       if (!children) {
         return (

@@ -102,7 +102,8 @@ const importAudio = async (req: Request, res: Response) => {
   const { shareLink } = req.body;
 
   const { success, errors, records } = await importService.importAudio(
-    shareLink
+    shareLink,
+    userId
   );
   if (!success) {
     throw new BadRequestError('Bad Request', errors);

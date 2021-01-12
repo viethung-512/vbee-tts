@@ -42,6 +42,7 @@
   "FIELDS_RECORD_ORIGINAL": "Original",
   "FIELDS_DIALECT": "Dialect",
   "FIELDS_ERROR_RECORD_CONTENT": "Content",
+  "FIELDS_ALLOPHONE": "Allophone",
 
   "ACTIONS": "Actions",
   "ACTIONS_ADD": "Add",
@@ -69,6 +70,7 @@
   "ACTIONS_GO_NEXT": "Go Next",
   "ACTIONS_GO_PREVIOUS": "Go Previous",
   "ACTIONS_VIEW_HISTORY": "View History",
+  "ACTIONS_SEARCH_ALLOPHONE": "Search Allophone",
 
   "STATUS": "Status",
   "STATUS_INITIAL": "Initial",

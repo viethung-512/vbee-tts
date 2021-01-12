@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import { DialectType, FieldError } from '@tts-dev/common';
+import vkBeautify from 'vkbeautify';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -48,6 +49,7 @@ const useStyles = makeStyles(theme => ({
 const defaultValues: RecordActionField = {
   original: '',
   dialect: DialectType.HANOI,
+  allophoneContent: '',
 };
 
 const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
@@ -104,6 +106,9 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
         reset({
           original: record.original,
           dialect: record.dialect,
+          allophoneContent: record.allophoneContent
+            ? vkBeautify.xml(record.allophoneContent.replace(/\s\s+/g, ' '))
+            : '',
         });
       }
 
@@ -117,6 +122,7 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
     return () => {
       active = false;
       reset(defaultValues);
+      dispatch(clearRecord());
     };
   }, [reset, dispatch, recordId]);
 
@@ -144,12 +150,6 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
       alertError(t('MESSAGE_ALERT_ERROR'));
     }
   }, [errors, alertError, t]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(clearRecord());
-    };
-  }, [dispatch]);
 
   const submitForm = handleSubmit(async values => {
     if (recordId) {
@@ -212,6 +212,15 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
           isValid={formState.isValid}
         />
       </Grid>
+
+      <Grid item>
+        <RecordActionForm
+          control={control}
+          errors={errors}
+          loading={loading}
+          record={current}
+        />
+      </Grid>
       <Grid item>
         <Audio record={current} />
       </Grid>
@@ -223,17 +232,6 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
           handlePrevious={handlePrevious}
           disabled={disabled}
         />
-      </Grid>
-      <Grid item>
-        <RecordActionForm control={control} errors={errors} loading={loading} />
-        {/* <FormEditRecord
-          control={control}
-          errors={errors}
-          loading={loading}
-          record={record}
-          allophoneContent={allophoneContent}
-          allophoneRef={allophoneRef}
-        /> */}
       </Grid>
     </Grid>
   );
