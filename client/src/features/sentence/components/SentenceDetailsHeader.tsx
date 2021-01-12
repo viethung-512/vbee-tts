@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -11,6 +12,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import StatusTag from 'app/layout/commons/sentence-record/StatusTag';
 import Button from 'app/layout/commons/form/Button';
 import { Sentence } from 'app/types/sentence';
+import { AppState, SentenceState } from 'app/redux/rootReducer';
 
 interface Props {
   submitSentence: (
@@ -51,6 +53,18 @@ const SentenceDetailsHeader: React.FC<Props> = ({
   const { t }: { t: any } = useTranslation();
   const classes = useStyles();
   const theme = useTheme();
+  const {
+    firstSentence,
+    lastSentence,
+    nextSentence,
+    previousSentence,
+  } = useSelector<AppState, SentenceState>(state => state.sentence);
+
+  const extraSentenceInitialized =
+    firstSentence !== '' &&
+    lastSentence !== '' &&
+    nextSentence !== '' &&
+    previousSentence !== '';
 
   return (
     <Grid
@@ -88,7 +102,9 @@ const SentenceDetailsHeader: React.FC<Props> = ({
           content={t('ACTIONS_SAVE_CHANGE')}
           variant='primary'
           onClick={submitSentence}
-          disabled={submitSentenceLoading || !isValid}
+          disabled={
+            submitSentenceLoading || !isValid || !extraSentenceInitialized
+          }
           loading={submitSentenceLoading}
         />
       </Grid>
