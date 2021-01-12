@@ -3,7 +3,6 @@ import './App.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConfirmProvider } from 'material-ui-confirm';
 import { useTranslation } from 'react-i18next';
-import { io } from 'socket.io-client';
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,12 +14,10 @@ import { getMe } from 'features/auth/authSlice';
 import { AppDispatch } from 'app/redux/store';
 import { AppState, AuthState } from 'app/redux/rootReducer';
 
-// const socket = io('http://tts-api.hung97.com/app-sockets', {
-//   secure: true,
-//   transports: ['websocket', 'polling'],
-// });
-
 const useStyles = makeStyles(theme => ({
+  app: {
+    minHeight: '100vh',
+  },
   btnRoot: {
     width: '10em',
     borderRadius: 0,
@@ -48,15 +45,8 @@ const App: React.FC = props => {
     fetchAuthUser();
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   socket.on('FromAPI', () => {
-  //     console.log('form API');
-  //   });
-  //   socket.emit('FromAPI', 'from api here');
-  // }, []);
-
   return (
-    <div className='App'>
+    <div className={classes.app}>
       <ConfirmProvider
         defaultOptions={{
           title: t('MODAL_TITLE_CONFIRM'),

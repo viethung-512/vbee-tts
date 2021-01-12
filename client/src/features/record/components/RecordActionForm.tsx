@@ -12,7 +12,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Skeleton from '@material-ui/lab/Skeleton';
 
 import HistoryIcon from '@material-ui/icons/History';
+import FindReplaceIcon from '@material-ui/icons/FindReplace';
 
+import useDrawer from 'hooks/useDrawer';
 import Input from 'app/layout/commons/form/Input';
 import { formatUID } from 'app/utils/helper';
 import { Record } from 'app/types/record';
@@ -20,6 +22,7 @@ import { Record } from 'app/types/record';
 export interface RecordActionField {
   original: string;
   dialect: DialectType;
+  allophoneContent: string;
 }
 
 interface Props {
@@ -45,7 +48,12 @@ const useStyles = makeStyles(theme => ({
   titleWrapper: {
     marginBottom: theme.spacing(2),
   },
-  inputRoot: {
+  allophoneInput: {
+    '& .MuiInputBase-root': {
+      fontFamily: "'Fira Code', monospace",
+      fontWeight: 400,
+      fontSize: '0.875rem',
+    },
     '& .MuiOutlinedInput-root': {
       '&:hover fieldset': {
         borderColor: theme.palette.primary.main,
@@ -64,6 +72,7 @@ const RecordActionForm: React.FC<Props> = ({
   const theme = useTheme();
   const classes = useStyles();
   const { t }: { t: any } = useTranslation();
+  const { openDrawer } = useDrawer();
 
   return (
     <Grid container className={classes.root}>
@@ -100,6 +109,22 @@ const RecordActionForm: React.FC<Props> = ({
               </IconButton>
             </Tooltip>
           </Grid>
+
+          <Grid item>
+            <Tooltip title={t('ACTIONS_SEARCH_ALLOPHONE')}>
+              <IconButton
+                onClick={() => {
+                  if (record && record.dialect) {
+                    openDrawer('SearchAllophoneDrawer', {
+                      dialect: record.dialect,
+                    });
+                  }
+                }}
+              >
+                <FindReplaceIcon />
+              </IconButton>
+            </Tooltip>
+          </Grid>
         </Grid>
 
         <Grid item>
@@ -117,18 +142,10 @@ const RecordActionForm: React.FC<Props> = ({
                 />
               </Grid>
               <Grid item container className={classes.formItem}>
-                {/* <Input
-                  control={control}
-                  multiline={true}
-                  rows={3}
-                  name='dialect'
-                  label={t('FIELDS_DIALECT')}
-                  error={errors.dialect}
-                /> */}
                 <Input
                   size='small'
                   name='dialect'
-                  label='dialect'
+                  label={t('FIELDS_DIALECT')}
                   control={control}
                   isError={Boolean(errors?.dialect)}
                   errorMessage={errors?.dialect?.message}
@@ -141,18 +158,16 @@ const RecordActionForm: React.FC<Props> = ({
                   ))}
                 </Input>
               </Grid>
-              {/* <Grid item container>
-                <TextField
-                  variant='outlined'
-                  style={{ width: '100%' }}
-                  inputRef={allophoneRef}
-                  defaultValue={allophoneContent}
-                  multiline
-                  rowsMax={20}
-                  // label='Allophone'
-                  className={classes.inputRoot}
-                />
-              </Grid> */}
+              <Input
+                name='allophoneContent'
+                label={t('FIELDS_ALLOPHONE')}
+                control={control}
+                isError={Boolean(errors?.allophoneContent)}
+                errorMessage={errors?.allophoneContent?.message}
+                multiline
+                rowsMax={20}
+                className={classes.allophoneInput}
+              />
             </Grid>
           </form>
         </Grid>

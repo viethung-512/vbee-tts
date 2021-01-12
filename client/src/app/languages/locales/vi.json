@@ -42,6 +42,7 @@
   "FIELDS_RECORD_ORIGINAL": "Văn bản gốc",
   "FIELDS_DIALECT": "Giọng vùng miền",
   "FIELDS_ERROR_RECORD_CONTENT": "Nội dung",
+  "FIELDS_ALLOPHONE": "Allophone",
 
   "ACTIONS": "Hành động",
   "ACTIONS_ADD": "Thêm",
@@ -69,6 +70,7 @@
   "ACTIONS_GO_NEXT": "Tiếp theo",
   "ACTIONS_GO_PREVIOUS": "Trước đó",
   "ACTIONS_VIEW_HISTORY": "Xem lịch sử",
+  "ACTIONS_SEARCH_ALLOPHONE": "Tra cứu âm vị",
 
   "STATUS": "Trạng thái",
   "STATUS_INITIAL": "Khởi tạo",

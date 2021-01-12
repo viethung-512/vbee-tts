@@ -48,7 +48,7 @@ const getFirstSentence = createAsyncThunk<
   ExtraSentence,
   undefined,
   { rejectValue: FieldError[] }
->('sentence:getFirstSentence', async (_, thunkAPI) => {
+>('broadcaster:getFirstSentence', async (_, thunkAPI) => {
   try {
     const res = await broadcasterAPI.getFirst();
     return res.data;
@@ -61,7 +61,7 @@ const getLastSentence = createAsyncThunk<
   ExtraSentence,
   undefined,
   { rejectValue: FieldError[] }
->('sentence:getLastSentence', async (_, thunkAPI) => {
+>('broadcaster:getLastSentence', async (_, thunkAPI) => {
   try {
     const res = await broadcasterAPI.getLast();
     return res.data;
@@ -74,7 +74,7 @@ const getNextSentence = createAsyncThunk<
   ExtraSentence,
   { id: string },
   { rejectValue: FieldError[] }
->('sentence:getNextSentence', async ({ id }, thunkAPI) => {
+>('broadcaster:getNextSentence', async ({ id }, thunkAPI) => {
   try {
     const res = await broadcasterAPI.getNext(id);
     return res.data;
@@ -87,7 +87,7 @@ const getPreviousSentence = createAsyncThunk<
   ExtraSentence,
   { id: string },
   { rejectValue: FieldError[] }
->('sentence:getPreviousSentence', async ({ id }, thunkAPI) => {
+>('broadcaster:getPreviousSentence', async ({ id }, thunkAPI) => {
   try {
     const res = await broadcasterAPI.getPrevious(id);
     return res.data;

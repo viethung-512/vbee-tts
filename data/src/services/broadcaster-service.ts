@@ -23,6 +23,7 @@ import { SentenceDoc } from '../models/sentence';
 import { RecordDao } from '../daos/record-dao';
 import { HistoryDao } from '../daos/history-dao';
 import { RecordDoc } from '../models/record';
+import { allophoneService } from './allophone-service';
 
 interface PaginatedBroadcaster extends PaginateResponse {
   docs: BroadcasterDoc[];
@@ -76,15 +77,78 @@ interface SubmitErrorBroadcasterSentenceResponse extends ServiceResponse {
   record?: RecordDoc;
 }
 
+const getProgresses = async (
+  types: SentenceType[],
+  idsCompleted: string[]
+): Promise<
+  {
+    type: SentenceType;
+    total: number;
+    current: number;
+    percent: number;
+  }[]
+> => {
+  const sentenceDao = new SentenceDao();
+
+  const sentences = await Promise.all(
+    idsCompleted.map(async id => {
+      const sentence = await sentenceDao.findItem(id);
+      return sentence!;
+    })
+  );
+
+  const result = await Promise.all(
+    types.map(async type => {
+      const { totalDocs: total } = await sentenceDao.findAll({
+        paginateQuery: {},
+        needAll: true,
+        options: {
+          status: SentenceStatus.APPROVED,
+          type: type,
+        },
+      });
+      const current = sentences.filter(sentence => sentence.type === type)
+        .length;
+
+      const percent = total === 0 ? 0 : (current * 100) / total;
+
+      return {
+        type: type,
+        total: total,
+        current: current,
+        percent: percent,
+      };
+    })
+  );
+
+  return result;
+};
+
 const getBroadcasters = async (
   query: PaginateQuery
 ): Promise<GetBroadcastersResponse> => {
   const broadcasterDao = new BroadcasterDao();
   const paginated = await broadcasterDao.findAll({ paginateQuery: query });
 
+  const newBroadcasters = await Promise.all(
+    paginated.docs.map(async doc => {
+      const progresses = await getProgresses(doc.types, doc.completed);
+      return {
+        user: doc.user,
+        voice: doc.voice,
+        types: doc.types,
+        completed: doc.completed,
+        id: doc._id,
+        dialect: doc.dialect,
+        expiredAt: doc.expiredAt,
+        progresses,
+      };
+    })
+  );
+
   return {
     success: true,
-    paginatedBroadcasters: paginated,
+    paginatedBroadcasters: { ...paginated, docs: newBroadcasters as any },
   };
 };
 
@@ -372,7 +436,7 @@ const getRelatedSentence = async (
     paginateQuery: {},
     needAll: true,
     options: {
-      _id: { $nin: broadcaster.completed },
+      // _id: { $nin: broadcaster.completed },
       status: SentenceStatus.APPROVED,
     },
     sort: { uid: 1 },
@@ -455,7 +519,7 @@ const toggleFinishRecord = async (
 
   const broadcasterSentence: BroadcasterSentence = {
     id: sentence.id,
-    uid: sentence.uid,
+    uid: sentence.manual_uid || sentence.uid,
     completed: false,
     type: sentence.type,
     dialect: dialect,
@@ -479,25 +543,37 @@ const toggleFinishRecord = async (
 
   await broadcaster.save();
 
-  const record = await recordDao.findItem({ uid: sentence.uid });
+  const record = await recordDao.findItem({
+    uid: sentence.manual_uid || sentence.uid,
+  });
   const voice = await voiceDao.findItem(broadcaster.voice.id);
   if (!record) {
-    const updated = await recordDao.createItem({
-      uid: sentence.uid,
-      type: sentence.type,
-      status: SentenceStatus.INITIAL,
-      voice: voice!,
-      sentence: sentence,
-      original: sentence.original,
+    const { success, allophone } = await allophoneService.getAllophone({
+      text: sentence.original,
+      voice: voice!.code,
       dialect: dialect,
     });
+    if (success) {
+      const updated = await recordDao.createItem({
+        uid: sentence.manual_uid || sentence.uid,
+        type: sentence.type,
+        status: SentenceStatus.INITIAL,
+        voice: voice!,
+        sentence: sentence,
+        original: sentence.original,
+        dialect: dialect,
+        allophoneContent: allophone,
+      });
 
-    await historyDao.createItem({
-      event: HistoryEvent.INSERT,
-      entity: HistoryEntity.RECORD,
-      user: user,
-      record: updated,
-    });
+      await historyDao.createItem({
+        event: HistoryEvent.INSERT,
+        entity: HistoryEntity.RECORD,
+        user: user,
+        record: updated,
+      });
+    } else {
+      console.log('can not get allophone content');
+    }
   }
 
   return {

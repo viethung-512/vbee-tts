@@ -14,6 +14,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     display: 'flex',
+    minHeight: '100vh',
   },
   toolbar: {
     display: 'flex',
@@ -25,6 +26,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.grey[100],
+    boxSizing: 'border-box',
   },
 }));
 

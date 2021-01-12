@@ -85,7 +85,7 @@ const ManageBroadcasterContainer: React.FC<Props> = ({ history }) => {
       title: t('FIELDS_SENTENCE_TYPE'),
       field: 'sentenceTypes',
       render: rowData => {
-        return rowData.types.map(type => {
+        return rowData.progresses.map(({ type, percent }) => {
           // const {
           //   progress: { percent },
           // } = rowData.progresses.find(p => p.type === type);
@@ -102,7 +102,7 @@ const ManageBroadcasterContainer: React.FC<Props> = ({ history }) => {
               </Grid>
 
               <Grid item xs={8}>
-                <LinearProgressWithLabel value={50} />
+                <LinearProgressWithLabel value={percent} />
               </Grid>
             </Grid>
           );
@@ -129,10 +129,6 @@ const ManageBroadcasterContainer: React.FC<Props> = ({ history }) => {
       },
       tooltip: t('ACTIONS_DELETE'),
       onClick: (event, rowData) => {
-        // openModal('ConfirmModal', {
-        //   data: { ids: (rowData as RowData[]).map((data: any) => data.id) },
-        //   type: modalActionTypes.DELETE_BROADCASTER,
-        // });
         const ids = (rowData as RowData[]).map((data: any) => data.id);
         handleDelete(ids);
       },
@@ -162,7 +158,6 @@ const ManageBroadcasterContainer: React.FC<Props> = ({ history }) => {
               limit: query.pageSize,
             })
             .then(res => {
-              console.log({ res });
               resolve({
                 data: res.docs,
                 page: res.page,

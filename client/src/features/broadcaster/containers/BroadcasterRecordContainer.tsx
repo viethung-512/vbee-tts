@@ -71,7 +71,7 @@ const BroadcasterRecordContainer: React.FC<Props> = ({ history }) => {
       .then(({ data }) => {
         if (data) {
           dispatch(setCurrentDialect(values.dialect));
-          history.push(`/broadcaster-sentences/${data}`);
+          history.push(`/broadcaster-record/${data}`);
         } else {
           alertInfo(t('MESSAGE_ALERT_INFO__NO_AVAILABLE_BROADCASTER_SENTENCE'));
         }

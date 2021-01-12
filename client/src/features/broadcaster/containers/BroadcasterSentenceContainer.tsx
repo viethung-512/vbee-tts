@@ -171,28 +171,29 @@ const BroadcasterSentenceContainer: React.FC<Props> = ({
 
   const handleGoFirst = () => {
     if (current && current.id !== firstSentence) {
-      history.push(`/broadcaster-sentences/${firstSentence}`);
+      history.push(`/broadcaster-record/${firstSentence}`);
     } else {
       alertInfo(t('MESSAGE_ALERT_INFO__ALREADY_FIRST_SENTENCE'));
     }
   };
   const handleGoLast = () => {
     if (current && current.id !== lastSentence) {
-      history.push(`/broadcaster-sentences/${lastSentence}`);
+      history.push(`/broadcaster-record/${lastSentence}`);
     } else {
       alertInfo(t('MESSAGE_ALERT_INFO__ALREADY_LAST_SENTENCE'));
     }
   };
   const handleNext = () => {
+    console.log({ nextSentence });
     if (nextSentence) {
-      history.push(`/broadcaster-sentences/${nextSentence}`);
+      history.push(`/broadcaster-record/${nextSentence}`);
     } else {
       alertInfo(t('MESSAGE_ALERT_INFO__NO_NEXT_SENTENCE'));
     }
   };
   const handlePrevious = () => {
     if (previousSentence) {
-      history.push(`/broadcaster-sentences/${previousSentence}`);
+      history.push(`/broadcaster-record/${previousSentence}`);
     } else {
       alertInfo(t('MESSAGE_ALERT_INFO__NO_PREVIOUS_SENTENCE'));
     }

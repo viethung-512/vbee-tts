@@ -1,17 +1,14 @@
 import React from 'react';
 import { Control, Controller } from 'react-hook-form';
 
-import TextField, {
-  OutlinedTextFieldProps,
-  TextFieldProps,
-} from '@material-ui/core/TextField';
+import TextField, { TextFieldProps } from '@material-ui/core/TextField';
 
 type Props = {
   control: Control;
   name: string;
-  label: string;
+  label?: string;
   fullWidth?: boolean;
-  variant?: OutlinedTextFieldProps['variant'];
+  variant?: TextFieldProps['variant'];
   isError: boolean;
   errorMessage?: string;
   startIcon?: React.ReactNode;

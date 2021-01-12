@@ -239,7 +239,7 @@ function useRoute() {
     },
     {
       exact: true,
-      path: '/broadcaster-sentences/:id',
+      path: '/broadcaster-record/:id',
       private: true,
       hasPermission: isBroadcaster,
       pageTitle: 'TITLE_BROADCASTER',
