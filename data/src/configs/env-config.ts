@@ -43,6 +43,9 @@ export const getEnv = () => {
   if (!process.env.HOST_URL) {
     throw new Error('HOST_URL must be defined');
   }
+  if (!process.env.QUEUE_GROUP_PREFIX) {
+    throw new Error('QUEUE_GROUP_PREFIX must be defined');
+  }
 
   const mongoURI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE}?authSource=admin`;
 
@@ -60,5 +63,6 @@ export const getEnv = () => {
       url: process.env.NATS_URL,
     },
     hostURL: process.env.HOST_URL,
+    queuePrefix: process.env.QUEUE_GROUP_PREFIX,
   };
 };
