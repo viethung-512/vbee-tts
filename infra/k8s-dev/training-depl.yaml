@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: training-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: training
+  template:
+    metadata:
+      labels:
+        app: training
+    spec:
+      containers:
+        - name: training
+          # image: viethung512/tts_training
+          image: us.gcr.io/vbee-tts-297514/training
+          env:
+            - name: PORT
+              value: '4000'
+            - name: MONGO_HOST
+              value: '104.154.106.47'
+            - name: MONGO_PORT
+              value: '27017'
+            - name: MONGO_DATABASE
+              value: 'dev_tts_training'
+            - name: MONGO_USERNAME
+              value: 'admin'
+            - name: MONGO_PASSWORD
+              value: 'admin123'
+
+            - name: ELASTICSEARCH_HOST
+              value: '104.154.106.47'
+            - name: ELASTICSEARCH_PORT
+              value: '9200'
+            - name: ELASTICSEARCH_INDEX
+              value: 'tts_training_log'
+
+            - name: TRAINING_HOST
+              value: 'http://43.239.223.87'
+            - name: TRAINING_PORT
+              value: '5002'
+
+            - name: STATIC_URL
+              value: 'http://tts-static.hung97.com/static/resource'
+            - name: STATIC_HOST
+              value: 'http://tts-static.hung97.com'
+
+            - name: HOST_URL
+              value: 'http://tts-api.hung97.com'
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: training-srv
+spec:
+  selector:
+    app: training
+  ports:
+    - name: training
+      protocol: TCP
+      port: 4000
+      targetPort: 4000

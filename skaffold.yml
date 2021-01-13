@@ -30,6 +30,16 @@ build:
           - src: 'src/**/*.ts'
             dest: .
 
+    # - image: viethung512/tts_training
+    - image: us.gcr.io/vbee-tts-297514/training
+      context: training
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+
     - image: us.gcr.io/vbee-tts-297514/worker
       context: worker
       docker:
