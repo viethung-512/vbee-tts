@@ -47,6 +47,8 @@ spec:
               value: 'tts'
             - name: HOST_URL
               value: 'http://tts-api.hung97.com'
+            - name: QUEUE_GROUP_PREFIX
+              value: 'prod'
 ---
 apiVersion: v1
 kind: Service

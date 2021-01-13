@@ -32,6 +32,9 @@ export const getEnv = () => {
   if (!process.env.HOST_URL) {
     throw new Error('HOST_URL must be defined');
   }
+  if (!process.env.QUEUE_GROUP_PREFIX) {
+    throw new Error('QUEUE_GROUP_PREFIX must be defined');
+  }
 
   return {
     port: process.env.PORT,
@@ -48,5 +51,6 @@ export const getEnv = () => {
     },
     hostURL: process.env.HOST_URL,
     staticHost: process.env.STATIC_HOST,
+    queuePrefix: process.env.QUEUE_GROUP_PREFIX,
   };
 };

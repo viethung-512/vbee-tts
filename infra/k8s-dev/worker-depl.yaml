@@ -41,3 +41,5 @@ spec:
               value: 'http://tts-static.hung97.com'
             - name: HOST_URL
               value: 'http://tts-api.hung97.com'
+            - name: QUEUE_GROUP_PREFIX
+              value: 'dev'
