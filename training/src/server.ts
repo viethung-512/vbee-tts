@@ -5,7 +5,7 @@ import { trainingService } from './services/training-service';
 
 const start = async () => {
   const { port } = getEnv();
-  console.log('Starting...');
+  console.log('Starting......');
 
   try {
     await connectDB();

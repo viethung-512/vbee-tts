@@ -1,0 +1,51 @@
+name: deploy-training
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'training/**'
+
+jobs:
+  build:
+    name: Build Training Service
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+
+      - name: Configure Docker use gcloud command-line tool as a credential
+        run: gcloud --quiet auth configure-docker
+
+      - name: Get gcloud credentials
+        run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+        env:
+          GKE_CLUSTER: tts-prod
+          GKE_ZONE: southamerica-east1-b
+
+      # Build the Docker image
+      - name: Build docker image
+        run: cd training && docker build -t viethung512/tts_training .
+
+      - name: Login to dockerhub
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push to dockerhub
+        run: docker push "viethung512/tts_training"
+
+      - name: Apply deployment
+        run: kubectl apply -f infra/k8s-prod/training-depl.yaml
+
+      - name: Restart
+        run: kubectl rollout restart deployment training-depl
