@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
 import HeadsetIcon from '@material-ui/icons/Headset';
@@ -12,12 +12,15 @@ import ReceiptIcon from '@material-ui/icons/Receipt';
 import TrainingSteps, { TrainingStepType } from '../components/TrainingSteps';
 import KaldiStep from '../components/KaldiStep';
 import MerlinStep from '../components/MerlinStep';
+import trainingAPI, { Progress } from 'app/api/trainingAPI';
+import Button from 'app/layout/commons/form/Button';
 
 const useStyles = makeStyles(theme => ({
   container: {
     padding: theme.spacing(2),
     backgroundColor: '#fff',
     boxShadow: theme.shadows[3],
+    marginTop: theme.spacing(2),
   },
   button: {
     marginRight: theme.spacing(1),
@@ -43,21 +46,32 @@ function getSteps(): TrainingStepType[] {
   ];
 }
 
-function getStepContent(stepIndex: number) {
-  switch (stepIndex) {
-    case 0:
-      return <KaldiStep />;
-    case 1:
-      return <MerlinStep />;
-    default:
-      return <KaldiStep />;
-  }
-}
-
 const ManageTrainingContainer: React.FC = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
+  const [progresses, setProgresses] = useState<(Progress | null)[]>([]);
   const steps = getSteps();
+  const [loading, setLoading] = useState(false);
+
+  const kaldiProgress = progresses
+    .filter(p => p)
+    .filter(p => p!.container === 'kaldi')
+    .sort((a, b) => {
+      // @ts-ignore
+      return new Date(b?.start_time) - new Date(a?.start_time);
+    });
+
+  useEffect(() => {
+    handleGetTrainingProgress();
+
+    const loop = setInterval(() => {
+      handleGetTrainingProgress();
+    }, 10 * 1000);
+
+    return () => {
+      clearInterval(loop);
+    };
+  }, []);
 
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -71,14 +85,66 @@ const ManageTrainingContainer: React.FC = () => {
     setActiveStep(0);
   };
 
+  function getStepContent(stepIndex: number) {
+    switch (stepIndex) {
+      case 0:
+        return <KaldiStep progresses={kaldiProgress} />;
+      case 1:
+        return <MerlinStep />;
+      default:
+        return <KaldiStep progresses={kaldiProgress} />;
+    }
+  }
+
+  const handleTraining = () => {
+    setLoading(true);
+
+    trainingAPI
+      .training()
+      .then(res => {
+        console.log(res);
+        return handleGetTrainingProgress();
+      })
+      .then(res => {
+        setProgresses([]);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleGetTrainingProgress = () => {
+    trainingAPI
+      .getTrainingProgress()
+      .then(res => {
+        setProgresses(res.progresses);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  console.log(progresses);
+
   return (
-    <Grid container direction='column' className={classes.container}>
-      <Grid item>
-        <TrainingSteps steps={steps} activeStep={activeStep} />
-      </Grid>
-      <Grid item>
-        <div>
-          {activeStep === steps.length ? (
+    <Fragment>
+      <Button
+        loading={loading}
+        content='Training'
+        variant='primary'
+        onClick={handleTraining}
+      />
+      <Grid container direction='column' className={classes.container}>
+        <Grid item>
+          <TrainingSteps steps={steps} activeStep={activeStep} />
+        </Grid>
+        <Grid item>
+          <div>
+            {getStepContent(activeStep)}
+            {/* {activeStep === steps.length ? (
             <div>
               <Typography className={classes.instructions}>
                 All steps completed - you&apos;re finished
@@ -108,10 +174,11 @@ const ManageTrainingContainer: React.FC = () => {
                 </Button>
               </div>
             </div>
-          )}
-        </div>
+          )} */}
+          </div>
+        </Grid>
       </Grid>
-    </Grid>
+    </Fragment>
   );
 };
 

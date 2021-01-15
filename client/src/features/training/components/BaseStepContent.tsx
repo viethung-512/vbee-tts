@@ -111,7 +111,6 @@ const BaseStepContent: React.FC<Props> = ({
             content,
             steps: childrenSteps,
           }) => {
-            console.log({ childrenSteps });
             return (
               <Step key={content}>
                 <StepLabel error={isError}>
@@ -125,9 +124,9 @@ const BaseStepContent: React.FC<Props> = ({
                         container
                         style={{ marginTop: theme.spacing(2) }}
                       >
-                        {childrenSteps.map(st => (
-                          <Grid item container key={st.label}>
-                            <Grid item xs={2}>
+                        {childrenSteps.map((st, index) => (
+                          <Grid item container key={`${st.label}-${index}`}>
+                            <Grid item xs={4}>
                               <Typography
                                 variant='body2'
                                 color='textSecondary'
@@ -137,7 +136,7 @@ const BaseStepContent: React.FC<Props> = ({
                               </Typography>
                             </Grid>
                             {st.status && (
-                              <Grid item xs={10}>
+                              <Grid item xs={8}>
                                 <LinearProgressWithLabel value={st.progress!} />
                               </Grid>
                             )}
@@ -153,7 +152,7 @@ const BaseStepContent: React.FC<Props> = ({
                   ) : (
                     <Typography>{content}</Typography>
                   )}
-                  <div className={classes.actionsContainer}>
+                  {/* <div className={classes.actionsContainer}>
                     <div>
                       <Button
                         disabled={activeStep === 0}
@@ -175,21 +174,21 @@ const BaseStepContent: React.FC<Props> = ({
                           : 'Start Training'}
                       </Button>
                     </div>
-                  </div>
+                  </div> */}
                 </StepContent>
               </Step>
             );
           }
         )}
       </Stepper>
-      {activeStep === steps.length && (
+      {/* {activeStep === steps.length && (
         <Paper square elevation={0} className={classes.resetContainer}>
           <Typography>All steps completed - you&apos;re finished</Typography>
           <Button onClick={handleReset} className={classes.button}>
             Reset
           </Button>
         </Paper>
-      )}
+      )} */}
     </div>
   );
 };

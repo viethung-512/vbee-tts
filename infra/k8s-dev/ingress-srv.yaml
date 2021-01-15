@@ -46,3 +46,9 @@ spec:
             backend:
               serviceName: data-srv
               servicePort: 4000
+
+          # training service
+          - path: /api/training/?(.*)
+            backend:
+              serviceName: training-srv
+              servicePort: 4000

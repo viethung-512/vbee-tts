@@ -1,0 +1,41 @@
+{
+  "name": "training",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node-dev --poll src/server.ts",
+    "dev": "npx ts-node-dev --project tsconfig.json -r tsconfig-paths/register src/server.ts"
+  },
+  "keywords": [
+    "tts",
+    "auth"
+  ],
+  "author": "Ngo Viet Hung",
+  "license": "ISC",
+  "dependencies": {
+    "@tts-dev/common": "^1.0.13",
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "bull": "^3.20.0",
+    "cors": "^2.8.5",
+    "elasticsearch": "^16.7.2",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "express-fileupload": "^1.2.1",
+    "mongoose": "^5.11.11",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.0",
+    "@types/bull": "^3.14.4",
+    "@types/cors": "^2.8.9",
+    "@types/elasticsearch": "^5.0.37",
+    "@types/express": "^4.17.11",
+    "@types/express-fileupload": "^1.1.6",
+    "@types/mongoose": "^5.10.3",
+    "@types/uuid": "^8.3.0",
+    "ts-node-dev": "^1.1.1",
+    "typescript": "^4.1.3"
+  }
+}
