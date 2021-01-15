@@ -12,7 +12,7 @@ export class TrainingParadigmDao extends BaseDao<
   TrainingParadigmAttrs
 > {
   model = TrainingParadigm;
-  populate = [];
+  populate = ['steps.step'];
 
   async createItem(data: TrainingParadigmAttrs) {
     const paradigm = TrainingParadigm.build({

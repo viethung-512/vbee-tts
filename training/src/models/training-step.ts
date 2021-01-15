@@ -1,17 +1,16 @@
 import mongoose from 'mongoose';
-import { Method } from 'axios';
 
 interface TrainingStepAttrs {
   name: string;
   url: string;
-  method?: Method;
+  paramFields: string[];
   description?: string;
 }
 
 interface TrainingStepDoc extends mongoose.Document {
   name: string;
   url: string;
-  method?: Method;
+  paramFields: string[];
   description?: string;
 }
 
@@ -21,22 +20,10 @@ interface TrainingStepModel extends mongoose.Model<TrainingStepDoc> {
 
 const trainingStepSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-    method: {
-      type: String,
-      default: 'POST',
-    },
-    description: {
-      type: String,
-      required: false,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
+    name: String,
+    url: String,
+    paramFields: [String],
+    description: String,
   },
   {
     toJSON: {

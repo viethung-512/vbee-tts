@@ -37,6 +37,13 @@ spec:
             - name: ELASTICSEARCH_INDEX
               value: 'tts_training_log'
 
+            - name: REDIS_HOST
+              value: '104.154.106.47'
+            - name: REDIS_PORT
+              value: '6379'
+            - name: REDIS_PASSWORD
+              value: 'viethung512'
+
             - name: TRAINING_HOST
               value: 'http://43.239.223.87'
             - name: TRAINING_PORT

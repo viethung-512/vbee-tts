@@ -17,7 +17,7 @@ const initDB = async () => {
           name: step.name,
           url: step.url,
           description: step.description,
-          method: step.method,
+          paramFields: step.paramFields,
         });
       }
     })
@@ -25,9 +25,19 @@ const initDB = async () => {
 
   const dnn = await trainingParadigmDao.findItem({ name: DNNParadigm.name });
   if (!dnn) {
+    const steps = await Promise.all(
+      DNNParadigm.steps.map(async step => {
+        const stepDoc = await trainingStepDao.findItem({ name: step.name });
+
+        return {
+          step: stepDoc!,
+          uid: step.uid,
+        };
+      })
+    );
     await trainingParadigmDao.createItem({
       name: DNNParadigm.name,
-      steps: DNNParadigm.steps,
+      steps: steps,
       description: DNNParadigm.description,
       status: 'active',
     });

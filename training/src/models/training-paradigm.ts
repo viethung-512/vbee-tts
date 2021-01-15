@@ -1,26 +1,21 @@
 import mongoose from 'mongoose';
-import { Method } from 'axios';
+import { TrainingStepDoc } from './training-step';
+
+interface TrainingStepParadigm {
+  step: TrainingStepDoc;
+  uid: number;
+}
 
 interface TrainingParadigmAttrs {
   name: string;
-  steps: {
-    uid: number;
-    name: string;
-    url: string;
-    method?: Method;
-  }[];
+  steps: TrainingStepParadigm[];
   status: 'active' | 'inactive';
   description?: string;
 }
 
 interface TrainingParadigmDoc extends mongoose.Document {
   name: string;
-  steps: {
-    uid: number;
-    name: string;
-    url: string;
-    method?: Method;
-  }[];
+  steps: TrainingStepParadigm[];
   status: 'active' | 'inactive';
   description?: string;
 }
@@ -31,29 +26,18 @@ interface TrainingParadigmModel extends mongoose.Model<TrainingParadigmDoc> {
 
 const trainingParadigmSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-    status: {
-      type: String,
-      required: true,
-    },
+    name: String,
+    status: String,
     steps: [
       {
-        uid: Number,
-        name: String,
-        url: String,
-        method: {
-          type: String,
-          default: 'POST',
+        step: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'TrainingStep',
         },
+        uid: Number,
       },
     ],
-    description: {
-      type: String,
-      required: false,
-    },
+    description: String,
   },
   {
     toJSON: {
@@ -82,4 +66,5 @@ export {
   TrainingParadigmAttrs,
   TrainingParadigmDoc,
   TrainingParadigmModel,
+  TrainingStepParadigm,
 };

@@ -1,6 +1,7 @@
 import { connectDB } from './utils/db';
 import { app } from './app';
 import { getEnv } from './configs/env-config';
+import { trainingService } from './services/training-service';
 
 const start = async () => {
   const { port } = getEnv();
@@ -17,5 +18,10 @@ const start = async () => {
     console.log(`Listening on port ${port}...`);
   });
 };
+
+// @ts-ignore
+global.TRAINING_RUNNING = false;
+
+trainingService.pingELK();
 
 start();

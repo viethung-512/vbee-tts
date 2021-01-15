@@ -10,6 +10,10 @@ router.get(
   // requireRootUser,
   trainingController.getTrainingProgresses
 );
-router.post('/', authUser, requireRootUser, trainingController.training);
+router.post(
+  '/',
+  // authUser, requireRootUser,
+  trainingController.training
+);
 
 export { router as trainingRoute };

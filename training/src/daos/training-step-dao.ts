@@ -19,7 +19,7 @@ export class TrainingStepDao extends BaseDao<
       name: data.name,
       description: data.description,
       url: data.url,
-      method: data.method,
+      paramFields: data.paramFields,
     });
 
     await step.save();
@@ -31,7 +31,7 @@ export class TrainingStepDao extends BaseDao<
     step.name = data.name || step.name;
     step.url = data.url || step.url;
     step.description = data.description || step.description;
-    step.method = data.method || step.method;
+    step.paramFields = data.paramFields || step.paramFields;
 
     await step.save();
 
