@@ -9,4 +9,5 @@ export enum Subjects {
   ROLE_DELETED = 'role:deleted',
   FILE_DOWNLOADED = 'file:downloaded',
   GG_DRIVER_INITIALIZED = 'gg-driver:initialized',
+  TRAINING_STEP_FINISHED = 'training-step:finished',
 }

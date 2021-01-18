@@ -1,18 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './App.css';
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConfirmProvider } from 'material-ui-confirm';
 import { useTranslation } from 'react-i18next';
+import LoadingBar from 'react-top-loading-bar';
 
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import AlertManager from 'app/cores/alert/AlertManager';
 import DrawerManager from 'app/cores/drawer/DrawerManager';
 import ModalManager from 'app/cores/modal/ModalManager';
 import AppRoutes from './AppRoutes';
 import { getMe } from 'features/auth/authSlice';
+import {
+  initOpenSubMenu,
+  activeSidebarItem,
+  breadcrumbChange,
+} from 'app/cores/ui/uiSlice';
 import { AppDispatch } from 'app/redux/store';
 import { AppState, AuthState } from 'app/redux/rootReducer';
+import useAsync from 'hooks/useAsync';
 
 const useStyles = makeStyles(theme => ({
   app: {
@@ -34,19 +42,42 @@ const useStyles = makeStyles(theme => ({
 const App: React.FC = props => {
   const classes = useStyles();
   const { t }: { t: any } = useTranslation();
+  const history = useHistory();
+  const { ref, startLoading, endLoading } = useAsync();
   const dispatch = useDispatch<AppDispatch>();
   const { loading } = useSelector<AppState, AuthState>(state => state.auth);
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchAuthUser = async () => {
+      startLoading();
       await dispatch(getMe());
+      endLoading();
     };
 
     fetchAuthUser();
   }, [dispatch]);
 
+  useEffect(() => {
+    const currentPath = history.location.pathname;
+
+    if (currentPath.split('/').length > 2) {
+      const arr = currentPath.split('/');
+      arr.splice(-1, 1);
+
+      console.log(arr.join('/'));
+
+      dispatch(initOpenSubMenu(arr.join('/')));
+      dispatch(activeSidebarItem(arr.join('/')));
+    } else {
+      dispatch(initOpenSubMenu(currentPath));
+      dispatch(activeSidebarItem(currentPath));
+    }
+  }, []);
+
   return (
     <div className={classes.app}>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
       <ConfirmProvider
         defaultOptions={{
           title: t('MODAL_TITLE_CONFIRM'),

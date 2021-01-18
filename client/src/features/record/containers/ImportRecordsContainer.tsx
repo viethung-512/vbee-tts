@@ -28,13 +28,11 @@ interface ImportRecordField {
 }
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(2),
-  },
   container: {
     boxShadow: theme.shadows[3],
     backgroundColor: '#fff',
     padding: theme.spacing(2),
+    borderRadius: 4,
   },
   title: {
     marginBottom: theme.spacing(3),
@@ -77,11 +75,7 @@ const ImportRecordsContainer: React.FC<Props> = ({ history }) => {
   });
 
   return (
-    <Grid container className={classes.root}>
-      {/* {data && data.fileDownloading && data.fileDownloading.percent && (
-          <LinearProgressWithLabel value={data?.fileDownloading?.percent} />
-        )} */}
-
+    <Grid container>
       <Grid item container direction='column' className={classes.container}>
         <Grid item className={classes.title}>
           <Typography variant='body1' color='textPrimary'>

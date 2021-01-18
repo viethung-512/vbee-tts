@@ -25,7 +25,8 @@ function usePromiseSubscription<T>(
         isSubscribed
           ? setState({ value: defaultValue, error: error, isPending: false })
           : null
-      );
+      )
+      .finally(() => {});
 
     return () => {
       isSubscribed = false;

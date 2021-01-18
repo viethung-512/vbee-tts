@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { FieldError } from '@tts-dev/common';
+
 import authAPI, { UpdateAuthProfileField } from 'app/api/authAPI';
 import { User } from 'app/types/user';
 

@@ -31,6 +31,10 @@ spec:
               '-cid',
               'tts',
             ]
+
+          # resources:
+          #   requests:
+          #     cpu: '50m'
 ---
 apiVersion: v1
 kind: Service

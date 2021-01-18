@@ -71,6 +71,9 @@
   "ACTIONS_GO_PREVIOUS": "Go Previous",
   "ACTIONS_VIEW_HISTORY": "View History",
   "ACTIONS_SEARCH_ALLOPHONE": "Search Allophone",
+  "ACTIONS_CONTINUE": "Continue",
+  "ACTIONS_RECORD": "Record",
+  "ACTIONS_UPLOAD_AUDIO": "Upload Audio",
 
   "STATUS": "Status",
   "STATUS_INITIAL": "Initial",
@@ -117,6 +120,7 @@
   "TITLE_MANAGE_ROLES": "Manage Roles",
   "TITLE_MANAGE_SENTENCES": "Manage Sentences",
   "TITLE_MANAGE_RECORDS": "Manage Records",
+  "TITLE_MANAGE_TRAINING": "Manage Trainings",
   "TITLE_OVERVIEW": "Overview",
   "TITLE_FEATURES": "Features",
   "TITLE_AUTHENTICATION": "Authentication",
@@ -141,6 +145,7 @@
   "TITLE_IMPORT_RECORD_HELPER_TEXT": "Please enter the shared link by GoogleDriver",
   "TITLE_EDIT_RECORD": "Edit Record",
   "TITLE_SUBMIT_ERROR_RECORD": "Submit Error Record",
+  "TITLE_LOGIN": "Login",
 
   "MESSAGE_ALERT_ERROR": "Something went wrong, please try again",
   "MESSAGE_ALERT_SUCCESS": "Success",

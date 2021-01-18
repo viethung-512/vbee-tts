@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import { useConfirm } from 'material-ui-confirm';
+import LoadingBar from 'react-top-loading-bar';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -28,6 +29,7 @@ import { User } from 'app/types/user';
 import { Voice } from 'app/types/voice';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import useAutoComplete from 'hooks/useAutoComplete';
 import useMutation from 'hooks/useMutation';
 import broadcasterAPI from 'app/api/broadcasterAPI';
@@ -38,6 +40,12 @@ interface Props {
 }
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    backgroundColor: '#fff',
+    boxShadow: theme.shadows[3],
+    borderRadius: 4,
+    padding: theme.spacing(2),
+  },
   toolbar: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
@@ -57,12 +65,14 @@ const BroadcasterDetailsContainer: React.FC<Props> = ({
   history,
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const { t }: { t: any } = useTranslation();
   const { alertSuccess, alertError } = useAlert();
   const [broadcaster, setBroadcaster] = useState<Broadcaster | null>(null);
   const [fetching, setFetching] = useState(false);
   const confirm = useConfirm();
   const [deleting, setDeleting] = useState(false);
+  const { ref, startLoading, endLoading } = useAsync();
   const {
     control,
     formState,
@@ -107,25 +117,31 @@ const BroadcasterDetailsContainer: React.FC<Props> = ({
 
     const fetchBroadcaster = async (id: string) => {
       setFetching(true);
-      try {
-        const broadcaster = await broadcasterAPI.getBroadcaster(id);
+      startLoading();
 
-        setBroadcaster(broadcaster);
-        setFetching(false);
-        reset({
-          user: broadcaster.user,
-          voice: broadcaster.voice,
-          dialect: broadcaster.dialect,
-          expiredAt: broadcaster.expiredAt,
-          types: broadcaster.types.map(type => ({
-            label: type,
-            value: type,
-          })),
+      broadcasterAPI
+        .getBroadcaster(id)
+        .then(broadcaster => {
+          setBroadcaster(broadcaster);
+          setFetching(false);
+          reset({
+            user: broadcaster.user,
+            voice: broadcaster.voice,
+            dialect: broadcaster.dialect,
+            expiredAt: broadcaster.expiredAt,
+            types: broadcaster.types.map(type => ({
+              label: type,
+              value: type,
+            })),
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          setFetching(false);
+          endLoading();
         });
-      } catch (err) {
-        console.log(err);
-        setFetching(false);
-      }
     };
 
     if (broadcasterId && active) {
@@ -196,7 +212,8 @@ const BroadcasterDetailsContainer: React.FC<Props> = ({
   );
 
   return (
-    <Grid container direction='column'>
+    <Grid container direction='column' className={classes.root}>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
       <Grid item className={classes.toolbar}>
         <BroadcasterDetailsHeader
           loading={creating || updating}

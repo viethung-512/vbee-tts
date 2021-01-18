@@ -22,6 +22,7 @@ export * from './events/role-updated-event';
 export * from './events/screenshot-created-event';
 export * from './events/sentence-submitted-event';
 export * from './events/subjects';
+export * from './events/training-step-finished-event';
 export * from './events/user-created-event';
 export * from './events/user-deleted-event';
 export * from './events/user-updated-event';

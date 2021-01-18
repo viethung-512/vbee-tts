@@ -6,6 +6,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
+import ArrowForward from '@material-ui/icons/ArrowForward';
+
 import Spinner from 'app/layout/commons/async/Spinner';
 import Input from 'app/layout/commons/form/Input';
 
@@ -30,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
   submitButton: {
-    width: '15em',
+    width: '12em',
     borderRadius: 24,
     [theme.breakpoints.down('xs')]: {
       width: '100%',
@@ -55,10 +57,10 @@ const LoginForm: React.FC<Props> = ({
           <Input
             control={control}
             name='phoneNumber'
-            // error={errors.phoneNumber}
             isError={Boolean(errors?.phoneNumber)}
             errorMessage={errors?.phoneNumber?.message}
             label={t('FIELDS_PHONE_NUMBER')}
+            variant='standard'
           />
         </Grid>
         <Grid item className={classes.formItem}>
@@ -66,10 +68,10 @@ const LoginForm: React.FC<Props> = ({
             control={control}
             name='password'
             type='password'
-            // error={errors.password}
             isError={Boolean(errors?.password)}
             errorMessage={errors?.password?.message}
             label={t('FIELDS_PASSWORD')}
+            variant='standard'
           />
         </Grid>
 
@@ -81,8 +83,9 @@ const LoginForm: React.FC<Props> = ({
             type='submit'
             disabled={!isValid || loading}
             className={classes.submitButton}
+            startIcon={loading ? null : <ArrowForward />}
           >
-            {loading ? <Spinner /> : t('ACTIONS_LOGIN')}
+            {loading ? <Spinner /> : t('ACTIONS_CONTINUE')}
           </Button>
         </Grid>
       </Grid>

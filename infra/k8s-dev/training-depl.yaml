@@ -44,6 +44,15 @@ spec:
             - name: REDIS_PASSWORD
               value: 'viethung512'
 
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID
+              value: 'tts'
+
             - name: TRAINING_HOST
               value: 'http://43.239.223.87'
             - name: TRAINING_PORT
@@ -57,6 +66,12 @@ spec:
             - name: HOST_URL
               value: 'http://tts-api.hung97.com'
 
+            - name: QUEUE_GROUP_PREFIX
+              value: 'dev'
+
+          resources:
+            requests:
+              cpu: '50m'
 ---
 apiVersion: v1
 kind: Service

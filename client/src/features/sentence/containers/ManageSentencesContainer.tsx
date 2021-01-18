@@ -3,6 +3,7 @@ import { RouteComponentProps, Link } from 'react-router-dom';
 import MaterialTable, { Action, Column } from 'material-table';
 import { useTranslation } from 'react-i18next';
 import { useConfirm } from 'material-ui-confirm';
+import LoadingBar from 'react-top-loading-bar';
 
 import { useTheme } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -14,6 +15,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import useDrawer from 'hooks/useDrawer';
 import useModal from 'hooks/useModal';
 import usePermission from 'hooks/usePermission';
@@ -44,6 +46,7 @@ const ManageSentencesContainer: React.FC<Props> = ({ history }) => {
   const { openModal } = useModal();
   const { openDrawer } = useDrawer();
   const confirm = useConfirm();
+  const { ref, startLoading, endLoading } = useAsync();
 
   const successColor = theme.palette.success.main;
   const errorColor = theme.palette.error.main;
@@ -239,55 +242,62 @@ const ManageSentencesContainer: React.FC<Props> = ({ history }) => {
   ];
 
   return (
-    <MaterialTable
-      columns={columns}
-      data={query => {
-        const filters = query.filters
-          .map(f => {
-            if (f.value.target.value.length === 0) {
-              return null;
-            }
+    <div style={{ borderRadius: 4 }}>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
+      <MaterialTable
+        columns={columns}
+        data={query => {
+          const filters = query.filters
+            .map(f => {
+              if (f.value.target.value.length === 0) {
+                return null;
+              }
 
-            return {
-              field: f.column.field,
-              data: f.value.target.value,
-            };
-          })
-          .filter(f => f);
-
-        return new Promise((resolve, reject) => {
-          sentenceAPI
-            .getSentences(
-              {
-                search: query.search,
-                page: query.page,
-                limit: query.pageSize,
-              },
-              filters
-            )
-            .then(res => {
-              resolve({
-                data: res.docs,
-                page: res.page,
-                totalCount: res.totalDocs,
-              });
+              return {
+                field: f.column.field,
+                data: f.value.target.value,
+              };
             })
-            .catch(err => {
-              reject(err);
-            });
-        });
-      }}
-      actions={actions}
-      options={{
-        ...materialTableOptions,
-        padding: 'dense',
-        selection: Boolean(isRootUser),
-        filtering: true,
-        hideFilterIcons: true,
-      }}
-      localization={materialTable}
-      isLoading={loading}
-    />
+            .filter(f => f);
+
+          return new Promise((resolve, reject) => {
+            startLoading();
+            sentenceAPI
+              .getSentences(
+                {
+                  search: query.search,
+                  page: query.page,
+                  limit: query.pageSize,
+                },
+                filters
+              )
+              .then(res => {
+                resolve({
+                  data: res.docs,
+                  page: res.page,
+                  totalCount: res.totalDocs,
+                });
+              })
+              .catch(err => {
+                reject(err);
+              })
+              .finally(() => {
+                endLoading();
+              });
+          });
+        }}
+        actions={actions}
+        options={{
+          ...materialTableOptions,
+          padding: 'dense',
+          selection: Boolean(isRootUser),
+          filtering: true,
+          hideFilterIcons: true,
+        }}
+        localization={materialTable}
+        isLoading={loading}
+      />
+    </div>
   );
 };
 

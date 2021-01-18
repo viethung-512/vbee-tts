@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import MaterialTable, { Action, Column } from 'material-table';
 import { useTranslation } from 'react-i18next';
 import { useConfirm } from 'material-ui-confirm';
+import LoadingBar from 'react-top-loading-bar';
 
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import Chip from '@material-ui/core/Chip';
@@ -10,6 +11,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import usePermission from 'hooks/usePermission';
 
 import { materialTableOptions } from 'app/configs/material-table';
@@ -38,6 +40,7 @@ const ManageBroadcasterContainer: React.FC<Props> = ({ history }) => {
   const confirm = useConfirm();
   const [loading, setLoading] = useState(false);
   const { alertSuccess, alertError } = useAlert();
+  const { ref, startLoading, endLoading } = useAsync();
   const classes = useStyles();
   const { isRootUser } = usePermission();
 
@@ -147,33 +150,40 @@ const ManageBroadcasterContainer: React.FC<Props> = ({ history }) => {
   ];
 
   return (
-    <MaterialTable
-      columns={columns}
-      data={query => {
-        return new Promise((resolve, reject) => {
-          broadcasterAPI
-            .getBroadcasters({
-              search: query.search,
-              page: query.page,
-              limit: query.pageSize,
-            })
-            .then(res => {
-              resolve({
-                data: res.docs,
-                page: res.page,
-                totalCount: res.totalDocs,
+    <Fragment>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
+      <MaterialTable
+        columns={columns}
+        data={query => {
+          return new Promise((resolve, reject) => {
+            startLoading();
+            broadcasterAPI
+              .getBroadcasters({
+                search: query.search,
+                page: query.page,
+                limit: query.pageSize,
+              })
+              .then(res => {
+                resolve({
+                  data: res.docs,
+                  page: res.page,
+                  totalCount: res.totalDocs,
+                });
+              })
+              .catch(err => {
+                reject(err);
+              })
+              .finally(() => {
+                endLoading();
               });
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
-      }}
-      actions={actions}
-      options={{ ...materialTableOptions, selection: isRootUser }}
-      localization={materialTable}
-      isLoading={loading}
-    />
+          });
+        }}
+        actions={actions}
+        options={{ ...materialTableOptions, selection: isRootUser }}
+        localization={materialTable}
+        isLoading={loading}
+      />
+    </Fragment>
   );
 };
 

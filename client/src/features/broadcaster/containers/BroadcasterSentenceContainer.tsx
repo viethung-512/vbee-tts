@@ -4,11 +4,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { DialectType, FieldError, SentenceType } from '@tts-dev/common';
+import LoadingBar from 'react-top-loading-bar';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import useAutoComplete from 'hooks/useAutoComplete';
 import broadcasterAPI from 'app/api/broadcasterAPI';
 
@@ -48,6 +50,12 @@ const defaultValues: BroadcasterSentenceFields = {
 };
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    backgroundColor: '#fff',
+    borderRadius: 4,
+    boxShadow: theme.shadows[3],
+    padding: theme.spacing(2),
+  },
   item: {
     marginBottom: theme.spacing(2),
     width: '100%',
@@ -70,7 +78,9 @@ const BroadcasterSentenceContainer: React.FC<Props> = ({
     currentDialect,
   } = useSelector<AppState, BroadcasterState>(state => state.broadcaster);
   const { alertInfo, alertSuccess, alertError } = useAlert();
+  const { ref, startLoading, endLoading } = useAsync();
   const [loading, setLoading] = useState(false);
+  const theme = useTheme();
   const [finishRecordLoading, setFinishRecordLoading] = useState(false);
 
   const {
@@ -89,6 +99,7 @@ const BroadcasterSentenceContainer: React.FC<Props> = ({
 
     const fetchBroadcasterSentence = async (id: string) => {
       setLoading(true);
+      startLoading();
       const res = await dispatch(
         getBroadcasterSentence({
           id,
@@ -108,6 +119,7 @@ const BroadcasterSentenceContainer: React.FC<Props> = ({
       }
 
       setLoading(false);
+      endLoading();
     };
 
     if (active && sentenceId) {
@@ -205,43 +217,51 @@ const BroadcasterSentenceContainer: React.FC<Props> = ({
   const uid = (current as BroadcasterSentence)?.uid;
 
   return (
-    <Grid item container direction='column' style={{ maxWidth: '40em' }}>
-      <Grid item className={classes.item}>
-        <BroadcasterSentenceTopActions
-          handleFinishRecord={handleFinishRecord}
-          finishRecordLoading={finishRecordLoading}
-          completed={completed}
-          uid={uid}
-        />
-      </Grid>
-      <Grid item className={classes.item}>
-        <BroadcasterSentenceHeader
-          control={control}
-          searching={searching}
-          setSearchTerm={setSearchTerm}
-          sentences={sentences}
-          setSentences={setSentences}
-          history={history}
-        />
-      </Grid>
+    <Grid
+      container
+      justify='center'
+      alignItems='flex-start'
+      className={classes.root}
+    >
+      <Grid item container direction='column' style={{ maxWidth: '40em' }}>
+        <LoadingBar color={theme.palette.secondary.main} ref={ref} />
+        <Grid item className={classes.item}>
+          <BroadcasterSentenceTopActions
+            handleFinishRecord={handleFinishRecord}
+            finishRecordLoading={finishRecordLoading}
+            completed={completed}
+            uid={uid}
+          />
+        </Grid>
+        <Grid item className={classes.item}>
+          <BroadcasterSentenceHeader
+            control={control}
+            searching={searching}
+            setSearchTerm={setSearchTerm}
+            sentences={sentences}
+            setSentences={setSentences}
+            history={history}
+          />
+        </Grid>
 
-      <Grid item className={classes.item}>
-        <BroadcasterSentenceMainContent
-          loading={loading}
-          completed={completed}
-          originalImage={originalImage}
-          dialectImage={dialectImage}
-          uid={uid}
-        />
-      </Grid>
+        <Grid item className={classes.item}>
+          <BroadcasterSentenceMainContent
+            loading={loading}
+            completed={completed}
+            originalImage={originalImage}
+            dialectImage={dialectImage}
+            uid={uid}
+          />
+        </Grid>
 
-      <Grid item>
-        <BroadcasterSentenceActions
-          handleGoFirst={handleGoFirst}
-          handleGoLast={handleGoLast}
-          handleNext={handleNext}
-          handlePrevious={handlePrevious}
-        />
+        <Grid item>
+          <BroadcasterSentenceActions
+            handleGoFirst={handleGoFirst}
+            handleGoLast={handleGoLast}
+            handleNext={handleNext}
+            handlePrevious={handlePrevious}
+          />
+        </Grid>
       </Grid>
     </Grid>
   );

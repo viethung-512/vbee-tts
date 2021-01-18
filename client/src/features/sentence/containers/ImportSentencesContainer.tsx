@@ -1,5 +1,6 @@
-import React, { useState, useRef, Fragment } from 'react';
+import React, { useState, useRef, Fragment, useEffect } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import LoadingBar from 'react-top-loading-bar';
 // @ts-ignore
 import readXlsxFile from 'read-excel-file';
 import { useTranslation } from 'react-i18next';
@@ -11,9 +12,9 @@ import Typography from '@material-ui/core/Typography';
 
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import Chip from '@material-ui/core/Chip';
-import LinearProgress from '@material-ui/core/LinearProgress';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import usePromiseSubscription from 'hooks/usePromiseSubscription';
 import PreviewData from '../components/PreviewData';
 import Button from 'app/layout/commons/form/Button';
@@ -25,13 +26,11 @@ interface Props {
 }
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(2),
-  },
   container: {
     backgroundColor: '#fff',
     padding: theme.spacing(2),
     boxShadow: theme.shadows[2],
+    borderRadius: 4,
   },
   errorTag: {
     color: theme.palette.error.main,
@@ -85,10 +84,23 @@ const ImportSentencesContainer: React.FC<Props> = ({ history }) => {
   const confirm = useConfirm();
 
   const { alertSuccess, alertError } = useAlert();
+  const { ref, startLoading, endLoading } = useAsync();
+
   const {
     value: sampleFileURL,
     isPending: fetching,
   } = usePromiseSubscription<string>(sentenceAPI.getSampleImportFileURL, '');
+
+  useEffect(() => {
+    startLoading();
+    if (!fetching) {
+      endLoading();
+    }
+
+    return () => {
+      endLoading();
+    };
+  }, [fetching]);
 
   const handleImport = async (file: any) => {
     confirm({ description: t('WARNING_IMPORT_SENTENCE') })
@@ -110,12 +122,7 @@ const ImportSentencesContainer: React.FC<Props> = ({ history }) => {
             setLoading(false);
           });
       })
-      .catch(() => {
-        // console.log('test');
-        // console.log(err);
-        // alertError(t('MESSAGE_ALERT_ERROR'));
-        // setLoading(false);
-      });
+      .catch(() => {});
   };
 
   const uploadFileRef = useRef<HTMLInputElement>(null);
@@ -165,11 +172,9 @@ const ImportSentencesContainer: React.FC<Props> = ({ history }) => {
   const columns = previewData.length > 0 ? getColumns(previewData) : [];
   const rowData = previewData.length > 0 ? getData(previewData) : [];
 
-  console.log({ sampleFileURL });
-
   return (
     <Fragment>
-      {fetching && <LinearProgress color='secondary' />}
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
       <Grid container direction='column' className={classes.container}>
         <Grid item>
           <Typography variant='body1'>{t('ACTIONS_SELECT_FILE')}</Typography>

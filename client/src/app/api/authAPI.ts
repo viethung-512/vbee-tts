@@ -1,4 +1,5 @@
 import { User } from 'app/types/user';
+import { lastDayOfDecade } from 'date-fns';
 import axiosClient from './axiosClient';
 
 export type UpdateAuthProfileField = Partial<

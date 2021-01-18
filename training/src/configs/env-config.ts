@@ -46,6 +46,16 @@ export const getEnv = () => {
     throw new Error('TRAINING_PORT must me defined');
   }
 
+  if (!process.env.NATS_CLIENT_ID) {
+    throw new Error('NATS_CLIENT_ID must be defined');
+  }
+  if (!process.env.NATS_CLUSTER_ID) {
+    throw new Error('NATS_CLUSTER_ID must be defined');
+  }
+  if (!process.env.NATS_URL) {
+    throw new Error('NATS_URL must be defined');
+  }
+
   if (!process.env.STATIC_URL) {
     throw new Error('STATIC_URL must be defined');
   }
@@ -57,7 +67,7 @@ export const getEnv = () => {
   }
 
   const mongoURI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE}?authSource=admin`;
-  const elasticsearchURI = `${process.env.ELASTICSEARCH_HOST}:${process.env.ELASTICSEARCH_PORT}`;
+  const elasticsearchURI = `http://${process.env.ELASTICSEARCH_HOST}:${process.env.ELASTICSEARCH_PORT}`;
   const trainingURI = `${process.env.TRAINING_HOST}:${process.env.TRAINING_PORT}`;
 
   return {
@@ -73,6 +83,11 @@ export const getEnv = () => {
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT),
       password: process.env.REDIS_PASSWORD,
+    },
+    nats: {
+      clusterId: process.env.NATS_CLUSTER_ID,
+      clientId: process.env.NATS_CLIENT_ID,
+      url: process.env.NATS_URL,
     },
     staticURL: process.env.STATIC_URL,
     staticHost: process.env.STATIC_HOST,

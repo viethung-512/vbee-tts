@@ -6,11 +6,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import { DialectType, FieldError } from '@tts-dev/common';
 import vkBeautify from 'vkbeautify';
+import LoadingBar from 'react-top-loading-bar';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import useModal from 'hooks/useModal';
 import useMutation from 'hooks/useMutation';
 
@@ -40,6 +42,12 @@ interface Props {
 }
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    backgroundColor: '#fff',
+    boxShadow: theme.shadows[3],
+    borderRadius: 4,
+    padding: theme.spacing(2),
+  },
   navigation: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
@@ -55,6 +63,7 @@ const defaultValues: RecordActionField = {
 const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
   const { t }: { t: any } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
+  const theme = useTheme();
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const {
@@ -65,6 +74,7 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
     previousRecord,
   } = useSelector<AppState, RecordState>(state => state.record);
   const { alertError, alertSuccess, alertInfo } = useAlert();
+  const { ref, startLoading, endLoading } = useAsync();
   const { openModal } = useModal();
   const {
     control,
@@ -200,7 +210,8 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
     previousRecord === '';
 
   return (
-    <Grid>
+    <Grid className={classes.root}>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
       <Grid item container>
         <RecordDetailsHeader
           cancel={handleCancel}
