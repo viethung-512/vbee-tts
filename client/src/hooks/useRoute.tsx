@@ -115,7 +115,7 @@ function useRoute() {
     },
     {
       exact: true,
-      path: '/roles-need-approve',
+      path: '/role-need-approve',
       private: true,
       hasPermission: isRootUser,
       pageTitle: 'TITLE_ROLE_NEED_APPROVE',
@@ -279,7 +279,7 @@ function useRoute() {
     },
     {
       exact: true,
-      path: '/trainings/history',
+      path: '/training-history',
       private: true,
       hasPermission: isRootUser,
       pageTitle: 'PAGE_TITLE__TRAINING_HISTORY',

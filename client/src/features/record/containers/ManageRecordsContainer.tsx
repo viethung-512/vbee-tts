@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import MaterialTable, { Action, Column } from 'material-table';
 import { useTranslation } from 'react-i18next';
 import { useConfirm } from 'material-ui-confirm';
+import LoadingBar from 'react-top-loading-bar';
 
 import { useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -12,6 +13,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import useDrawer from 'hooks/useDrawer';
 import useModal from 'hooks/useModal';
 import usePermission from 'hooks/usePermission';
@@ -38,6 +40,7 @@ const ManageRecordsContainer: React.FC<Props> = ({ history }) => {
   const [loading, setLoading] = useState(false);
   const { isRootUser } = usePermission();
   const { alertSuccess, alertError } = useAlert();
+  const { ref, startLoading, endLoading } = useAsync();
   const { openModal } = useModal();
   const { openDrawer } = useDrawer();
   const confirm = useConfirm();
@@ -216,55 +219,62 @@ const ManageRecordsContainer: React.FC<Props> = ({ history }) => {
   ];
 
   return (
-    <MaterialTable
-      columns={columns}
-      data={query => {
-        const filters = query.filters
-          .map(f => {
-            if (f.value.target.value.length === 0) {
-              return null;
-            }
+    <div style={{ borderRadius: 4 }}>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
+      <MaterialTable
+        columns={columns}
+        data={query => {
+          const filters = query.filters
+            .map(f => {
+              if (f.value.target.value.length === 0) {
+                return null;
+              }
 
-            return {
-              field: f.column.field,
-              data: f.value.target.value,
-            };
-          })
-          .filter(f => f);
-
-        return new Promise((resolve, reject) => {
-          recordAPI
-            .getRecords(
-              {
-                search: query.search,
-                page: query.page,
-                limit: query.pageSize,
-              },
-              filters
-            )
-            .then(res => {
-              resolve({
-                data: res.docs,
-                page: res.page,
-                totalCount: res.totalDocs,
-              });
+              return {
+                field: f.column.field,
+                data: f.value.target.value,
+              };
             })
-            .catch(err => {
-              reject(err);
-            });
-        });
-      }}
-      actions={actions}
-      options={{
-        ...materialTableOptions,
-        padding: 'dense',
-        selection: Boolean(isRootUser),
-        filtering: true,
-        hideFilterIcons: true,
-      }}
-      localization={materialTable}
-      isLoading={loading}
-    />
+            .filter(f => f);
+
+          return new Promise((resolve, reject) => {
+            startLoading();
+            recordAPI
+              .getRecords(
+                {
+                  search: query.search,
+                  page: query.page,
+                  limit: query.pageSize,
+                },
+                filters
+              )
+              .then(res => {
+                resolve({
+                  data: res.docs,
+                  page: res.page,
+                  totalCount: res.totalDocs,
+                });
+              })
+              .catch(err => {
+                reject(err);
+              })
+              .finally(() => {
+                endLoading();
+              });
+          });
+        }}
+        actions={actions}
+        options={{
+          ...materialTableOptions,
+          padding: 'dense',
+          selection: Boolean(isRootUser),
+          filtering: true,
+          hideFilterIcons: true,
+        }}
+        localization={materialTable}
+        isLoading={loading}
+      />
+    </div>
   );
 };
 

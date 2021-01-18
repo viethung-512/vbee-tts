@@ -32,7 +32,6 @@ axiosClient.interceptors.response.use(
   },
   error => {
     // Handle errors
-
     if (error && error.response.data && error.response.data.errors) {
       throw error.response.data.errors;
     }

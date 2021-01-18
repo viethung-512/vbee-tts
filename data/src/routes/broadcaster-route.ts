@@ -89,6 +89,12 @@ router.get(
   validateRequest,
   broadcasterController.getBroadcaster
 );
+router.post(
+  '/upload-audio',
+  authUser,
+  broadcasterMiddleware.requireBroadcaster,
+  broadcasterController.uploadAudio
+);
 
 router.post(
   '/',
@@ -98,6 +104,7 @@ router.post(
   validateRequest,
   broadcasterController.createBroadcaster
 );
+
 router.put(
   '/toggle-finish-record/:id',
   authUser,

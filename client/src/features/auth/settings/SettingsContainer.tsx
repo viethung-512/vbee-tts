@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import LoadingBar from 'react-top-loading-bar';
 
 import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -16,11 +17,14 @@ import AccountTab from './account-tab/AccountTab';
 import SecureTab from './secure-tab/SecureTab';
 import { AppState, AuthState } from 'app/redux/rootReducer';
 
+import useAsync from 'hooks/useAsync';
+
 const useStyles = makeStyles(theme => ({
   container: {
-    marginTop: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    padding: theme.spacing(2, 2, 10),
+    boxShadow: theme.shadows[3],
+    borderRadius: 4,
+    backgroundColor: '#fff',
   },
   tabsWrapper: {
     backgroundColor: '#fff',
@@ -65,6 +69,19 @@ const SettingsContainer: React.FC = () => {
     state => state.auth
   );
   const [value, setValue] = useState<number>(0);
+  const { ref, startLoading, endLoading } = useAsync();
+
+  useEffect(() => {
+    if (!loading) {
+      endLoading();
+    } else {
+      startLoading();
+    }
+
+    return () => {
+      endLoading();
+    };
+  }, [loading]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -72,6 +89,7 @@ const SettingsContainer: React.FC = () => {
 
   return (
     <Grid container className={classes.container}>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
       <Grid
         item
         container

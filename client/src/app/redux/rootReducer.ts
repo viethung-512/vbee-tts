@@ -3,6 +3,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 import alertReducer from '../cores/alert/alertSlice';
 import drawerReducer from '../cores/drawer/drawerSlice';
 import modalReducer from '../cores/modal/modalSlice';
+import uiReducer from '../cores/ui/uiSlice';
 import authReducer from 'features/auth/authSlice';
 import sentenceReducer from 'features/sentence/sentenceSlice';
 import recordReducer from 'features/record/recordSlice';
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   alert: alertReducer,
   drawer: drawerReducer,
   modal: modalReducer,
+  ui: uiReducer,
   auth: authReducer,
   sentence: sentenceReducer,
   record: recordReducer,
@@ -26,5 +28,6 @@ export type ModalState = ReturnType<typeof modalReducer>;
 export type SentenceState = ReturnType<typeof sentenceReducer>;
 export type RecordState = ReturnType<typeof recordReducer>;
 export type BroadcasterState = ReturnType<typeof broadcasterReducer>;
+export type UIState = ReturnType<typeof uiReducer>;
 
 export default rootReducer;

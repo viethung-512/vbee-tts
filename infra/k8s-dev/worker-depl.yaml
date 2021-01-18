@@ -43,3 +43,7 @@ spec:
               value: 'http://tts-api.hung97.com'
             - name: QUEUE_GROUP_PREFIX
               value: 'dev'
+
+          resources:
+            requests:
+              cpu: '50m'

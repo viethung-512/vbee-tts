@@ -17,5 +17,20 @@ export interface SidebarMenu {
   data: SidebarItem[];
 }
 
-export const sidebarWidth = 270;
+export interface MenuItem {
+  key: string;
+  name: string;
+  link: string;
+  permission: boolean;
+}
+export interface Menu {
+  key: string;
+  name: string;
+  icon: string;
+  link?: string;
+  permission: boolean;
+  child?: MenuItem[];
+}
+
+export const sidebarWidth = 300;
 export const sidebarMinWidth = 73;

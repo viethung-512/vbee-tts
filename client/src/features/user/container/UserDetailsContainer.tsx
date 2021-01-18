@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import { useConfirm } from 'material-ui-confirm';
+import LoadingBar from 'react-top-loading-bar';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Accordion from '@material-ui/core/Accordion';
@@ -15,6 +16,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import useAutoComplete from 'hooks/useAutoComplete';
 import { getUserActionValidator } from 'app/utils/validators';
 import UserDetailsHeader from '../components/UserDetailsHeader';
@@ -33,6 +35,12 @@ interface Props {
 }
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    backgroundColor: '#fff',
+    boxShadow: theme.shadows[3],
+    borderRadius: 4,
+    padding: theme.spacing(2),
+  },
   toolbar: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
@@ -59,9 +67,11 @@ const UserDetailsContainer: React.FC<Props> = ({ userId, history }) => {
   const classes = useStyles();
   const [user, setUser] = useState<User>();
   const confirm = useConfirm();
+  const theme = useTheme();
   const { alertSuccess, alertError } = useAlert();
   const [deleting, setDeleting] = useState(false);
   const [fetchUserLoading, setFetchUserLoading] = useState(false);
+  const { ref, startLoading, endLoading } = useAsync();
   const {
     control,
     formState,
@@ -99,22 +109,28 @@ const UserDetailsContainer: React.FC<Props> = ({ userId, history }) => {
 
     const fetchUser = async (id: string) => {
       setFetchUserLoading(true);
-      try {
-        const fetchedUser = await userAPI.getUser(id);
+      startLoading();
 
-        setUser(fetchedUser);
-        setFetchUserLoading(false);
-        const formData = {
-          username: fetchedUser.username,
-          email: fetchedUser.email,
-          phoneNumber: fetchedUser.phoneNumber,
-          role: fetchedUser.role,
-        };
-        reset(formData);
-      } catch (err) {
-        console.log(err);
-        setFetchUserLoading(false);
-      }
+      userAPI
+        .getUser(id)
+        .then(fetchedUser => {
+          setUser(fetchedUser);
+          setFetchUserLoading(false);
+          const formData = {
+            username: fetchedUser.username,
+            email: fetchedUser.email,
+            phoneNumber: fetchedUser.phoneNumber,
+            role: fetchedUser.role,
+          };
+          reset(formData);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          setFetchUserLoading(false);
+          endLoading();
+        });
     };
 
     if (active && userId) {
@@ -171,7 +187,8 @@ const UserDetailsContainer: React.FC<Props> = ({ userId, history }) => {
   const submitting = createUserLoading || updateUserLoading;
 
   return (
-    <Grid container direction='column'>
+    <Grid container direction='column' className={classes.root}>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
       <Grid item className={classes.toolbar}>
         <UserDetailsHeader
           loading={fetchUserLoading}

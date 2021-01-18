@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import MaterialTable, {
   Action as MTAction,
@@ -7,6 +7,7 @@ import MaterialTable, {
 import { useConfirm } from 'material-ui-confirm';
 import { Resource, Action } from '@tts-dev/common';
 import { useTranslation } from 'react-i18next';
+import LoadingBar from 'react-top-loading-bar';
 
 import { useTheme } from '@material-ui/core/styles';
 import Chip from '@material-ui/core/Chip';
@@ -14,6 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import useModal from 'hooks/useModal';
 import usePermission from 'hooks/usePermission';
 import useLocalization from 'hooks/useLocalization';
@@ -36,6 +38,7 @@ const ManageRolesContainer: React.FC<Props> = ({ history }) => {
   const { materialTable } = useLocalization();
   const { alertSuccess, alertError } = useAlert();
   const { closeModal } = useModal();
+  const { ref, startLoading, endLoading } = useAsync();
   const { canCreateRole, canUpdateRole, canDeleteRole } = usePermission();
 
   const primaryColor = theme.palette.primary.main;
@@ -171,33 +174,40 @@ const ManageRolesContainer: React.FC<Props> = ({ history }) => {
   ];
 
   return (
-    <MaterialTable
-      columns={columns}
-      data={query => {
-        return new Promise((resolve, reject) => {
-          roleAPI
-            .getRoles({
-              search: query.search,
-              page: query.page,
-              limit: query.pageSize,
-            })
-            .then(res => {
-              resolve({
-                data: res.docs,
-                page: res.page,
-                totalCount: res.totalDocs,
+    <Fragment>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
+      <MaterialTable
+        columns={columns}
+        data={query => {
+          return new Promise((resolve, reject) => {
+            startLoading();
+            roleAPI
+              .getRoles({
+                search: query.search,
+                page: query.page,
+                limit: query.pageSize,
+              })
+              .then(res => {
+                resolve({
+                  data: res.docs,
+                  page: res.page,
+                  totalCount: res.totalDocs,
+                });
+              })
+              .catch(err => {
+                reject(err);
+              })
+              .finally(() => {
+                endLoading();
               });
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
-      }}
-      actions={actions}
-      options={{ ...materialTableOptions, selection: canDeleteRole }}
-      localization={materialTable}
-      isLoading={loading}
-    />
+          });
+        }}
+        actions={actions}
+        options={{ ...materialTableOptions, selection: canDeleteRole }}
+        localization={materialTable}
+        isLoading={loading}
+      />
+    </Fragment>
   );
 };
 

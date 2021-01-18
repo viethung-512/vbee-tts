@@ -107,6 +107,22 @@ const submitErrorBroadcasterSentence = async (
   });
 };
 
+const uploadAudio = async (file: any): Promise<{ success: boolean }> => {
+  const formData = new FormData();
+
+  formData.append('file', file);
+
+  console.log({ file });
+
+  return axiosClient.post('/api/broadcasters/upload-audio', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      maxBodyLength: Infinity,
+      maxContentLength: Infinity,
+    },
+  });
+};
+
 const broadcasterAPI = {
   getBroadcasters,
   getBroadcaster,
@@ -122,6 +138,7 @@ const broadcasterAPI = {
   getPrevious,
   toggleFinishRecord,
   submitErrorBroadcasterSentence,
+  uploadAudio,
 };
 
 export default broadcasterAPI;

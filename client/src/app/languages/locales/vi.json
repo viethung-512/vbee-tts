@@ -71,6 +71,9 @@
   "ACTIONS_GO_PREVIOUS": "Trước đó",
   "ACTIONS_VIEW_HISTORY": "Xem lịch sử",
   "ACTIONS_SEARCH_ALLOPHONE": "Tra cứu âm vị",
+  "ACTIONS_CONTINUE": "Tiếp tục",
+  "ACTIONS_RECORD": "Thu âm",
+  "ACTIONS_UPLOAD_AUDIO": "Upload Audio",
 
   "STATUS": "Trạng thái",
   "STATUS_INITIAL": "Khởi tạo",
@@ -117,6 +120,7 @@
   "TITLE_MANAGE_ROLES": "Quản lý quyền",
   "TITLE_MANAGE_SENTENCES": "Quản lý câu",
   "TITLE_MANAGE_RECORDS": "Quản lý bản ghi âm",
+  "TITLE_MANAGE_TRAINING": "Quản lý huấn luyện",
   "TITLE_OVERVIEW": "Khái quát",
   "TITLE_FEATURES": "Nhóm chức năng",
   "TITLE_AUTHENTICATION": "Xác thực người dùng",
@@ -141,6 +145,7 @@
   "TITLE_IMPORT_RECORD_HELPER_TEXT": "Vui lòng nhập liên kết chia sẻ bởi GoogleDriver",
   "TITLE_EDIT_RECORD": "Chỉnh sửa sau thu âm",
   "TITLE_SUBMIT_ERROR_RECORD": "Báo lỗi bản thu âm",
+  "TITLE_LOGIN": "Đăng nhập",
 
   "MESSAGE_ALERT_ERROR": "Không thể thực hiện hành động, vui lòng thử lại sau",
   "MESSAGE_ALERT_SUCCESS": "Thành công",

@@ -5,11 +5,13 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import { DialectType, FieldError, SentenceType } from '@tts-dev/common';
+import LoadingBar from 'react-top-loading-bar';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import useModal from 'hooks/useModal';
 import useMutation from 'hooks/useMutation';
 
@@ -38,6 +40,12 @@ interface Props {
 }
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    backgroundColor: '#fff',
+    boxShadow: theme.shadows[3],
+    borderRadius: 4,
+    padding: theme.spacing(2),
+  },
   header: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
@@ -65,6 +73,7 @@ const SentenceDetailsContainer: React.FC<Props> = ({ sentenceId, history }) => {
   const { t }: { t: any } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
+  const theme = useTheme();
   const [loading, setLoading] = useState(false);
   const {
     current,
@@ -74,6 +83,7 @@ const SentenceDetailsContainer: React.FC<Props> = ({ sentenceId, history }) => {
     previousSentence,
   } = useSelector<AppState, SentenceState>(state => state.sentence);
   const { alertError, alertSuccess, alertInfo } = useAlert();
+  const { ref, startLoading, endLoading } = useAsync();
 
   const { openModal } = useModal();
   const {
@@ -110,6 +120,7 @@ const SentenceDetailsContainer: React.FC<Props> = ({ sentenceId, history }) => {
 
     const fetchSentence = async (id: string) => {
       setLoading(true);
+      startLoading();
       const res = await dispatch(getSentence({ id }));
 
       if (res.meta.requestStatus === 'rejected') {
@@ -128,6 +139,7 @@ const SentenceDetailsContainer: React.FC<Props> = ({ sentenceId, history }) => {
       }
 
       setLoading(false);
+      endLoading();
     };
 
     if (active && sentenceId) {
@@ -219,7 +231,8 @@ const SentenceDetailsContainer: React.FC<Props> = ({ sentenceId, history }) => {
     previousSentence === '';
 
   return (
-    <Grid>
+    <Grid className={classes.root}>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
       <Grid item container className={classes.header}>
         <SentenceDetailsHeader
           cancel={handleCancel}

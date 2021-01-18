@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import { useConfirm } from 'material-ui-confirm';
+import LoadingBar from 'react-top-loading-bar';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Accordion from '@material-ui/core/Accordion';
@@ -16,6 +17,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import useMutation from 'hooks/useMutation';
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import RoleDetailsHeader from '../components/RoleDetailsHeader';
 import { Role, RoleResource } from 'app/types/role';
 import RoleDetailsForm, {
@@ -31,6 +33,12 @@ interface Props {
 }
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    backgroundColor: '#fff',
+    boxShadow: theme.shadows[3],
+    borderRadius: 4,
+    padding: theme.spacing(2),
+  },
   toolbar: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
@@ -45,11 +53,13 @@ const defaultValues: RoleActionField = {
 const RoleDetailsContainer: React.FC<Props> = ({ history, roleId }) => {
   const { t }: { t: any } = useTranslation();
   const classes = useStyles();
+  const theme = useTheme();
   const [role, setRole] = useState<Role>();
   const [deleting, setDeleting] = useState(false);
   const [fetchRoleLoading, setFetchRoleLoading] = useState(false);
   const confirm = useConfirm();
   const { alertSuccess, alertError } = useAlert();
+  const { ref, startLoading, endLoading } = useAsync();
   const {
     control,
     formState,
@@ -84,39 +94,45 @@ const RoleDetailsContainer: React.FC<Props> = ({ history, roleId }) => {
   useEffect(() => {
     let active = true;
 
-    const fetchUser = async (id: string) => {
+    const fetchRole = async (id: string) => {
       setFetchRoleLoading(true);
-      try {
-        const fetchedRole = await roleAPI.getRole(id);
+      startLoading();
 
-        const newResources = resources.map(rs => {
-          const resourceMatch = fetchedRole.resources.find(
-            resource => resource.name === rs.name
-          );
+      roleAPI
+        .getRole(id)
+        .then(fetchedRole => {
+          const newResources = resources.map(rs => {
+            const resourceMatch = fetchedRole.resources.find(
+              resource => resource.name === rs.name
+            );
 
-          if (resourceMatch) {
-            return { ...rs, actions: resourceMatch.actions };
-          } else {
-            return { ...rs };
-          }
+            if (resourceMatch) {
+              return { ...rs, actions: resourceMatch.actions };
+            } else {
+              return { ...rs };
+            }
+          });
+          const formValues = {
+            name: fetchedRole.name,
+            policy: fetchedRole.policy.official_version || '',
+          };
+
+          reset(formValues);
+          setRole(fetchedRole);
+          setResources(newResources);
+          setFetchRoleLoading(false);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          setFetchRoleLoading(false);
+          endLoading();
         });
-        const formValues = {
-          name: fetchedRole.name,
-          policy: fetchedRole.policy.official_version || '',
-        };
-
-        reset(formValues);
-        setRole(fetchedRole);
-        setResources(newResources);
-        setFetchRoleLoading(false);
-      } catch (err) {
-        console.log(err);
-        setFetchRoleLoading(false);
-      }
     };
 
     if (active && roleId) {
-      fetchUser(roleId);
+      fetchRole(roleId);
     }
 
     return () => {
@@ -172,7 +188,13 @@ const RoleDetailsContainer: React.FC<Props> = ({ history, roleId }) => {
     : true;
 
   return (
-    <Grid container direction='column' alignItems='center'>
+    <Grid
+      container
+      direction='column'
+      alignItems='center'
+      className={classes.root}
+    >
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
       <Grid item container className={classes.toolbar}>
         <RoleDetailsHeader
           submitForm={submitForm}

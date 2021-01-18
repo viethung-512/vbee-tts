@@ -233,6 +233,25 @@ const submitErrorBroadcasterSentence = async (req: Request, res: Response) => {
   res.status(200).send(record);
 };
 
+const uploadAudio = async (req: Request, res: Response) => {
+  console.log('upload audio');
+  const userId = req.authUser!.id;
+  if (!req.files)
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send('Please upload your file');
+    }
+
+  const { success, errors } = await broadcasterService.uploadAudio(
+    req.files.file,
+    userId
+  );
+
+  if (!success) {
+    throw new BadRequestError('Bad Request', errors);
+  }
+  res.status(201).send({ success });
+};
+
 const broadcasterController = {
   getBroadcasters,
   getBroadcaster,
@@ -249,6 +268,7 @@ const broadcasterController = {
   getPreviousSentence,
   toggleFinishRecord,
   submitErrorBroadcasterSentence,
+  uploadAudio,
 };
 
 export { broadcasterController };

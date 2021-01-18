@@ -1,4 +1,7 @@
-import mongoose from 'mongoose';
+import fs from 'fs';
+import axios from 'axios';
+import FormData from 'form-data';
+import { v4 as uuid } from 'uuid';
 import {
   AuthUser,
   DialectType,
@@ -10,6 +13,7 @@ import {
   SentenceType,
   ServiceResponse,
 } from '@tts-dev/common';
+import { getEnv } from '../configs/env-config';
 import { BroadcasterDao } from '../daos/broadcaster-dao';
 import { SentenceDao } from '../daos/sentence-dao';
 import { UserDao } from '../daos/user-dao';
@@ -24,6 +28,7 @@ import { RecordDao } from '../daos/record-dao';
 import { HistoryDao } from '../daos/history-dao';
 import { RecordDoc } from '../models/record';
 import { allophoneService } from './allophone-service';
+import { UploadedFile } from 'express-fileupload';
 
 interface PaginatedBroadcaster extends PaginateResponse {
   docs: BroadcasterDoc[];
@@ -370,7 +375,7 @@ const getInitBroadcasterSentence = async (
     needAll: true,
     options: {
       type: type,
-      _id: { $nin: broadcaster.completed },
+      // _id: { $nin: broadcaster.completed },
       status: SentenceStatus.APPROVED,
     },
     sort: { uid: 1 },
@@ -618,6 +623,72 @@ const submitErrorBroadcasterSentence = async (
   };
 };
 
+const uploadAudio = async (
+  file: UploadedFile,
+  authUserId: string
+): Promise<ServiceResponse> => {
+  const { staticHost } = getEnv();
+  const fileExtension = file.name.split('.')[file.name.split('.').length - 1];
+  const randomFilename = `${uuid()}.${fileExtension}`;
+  const userDao = new UserDao();
+  const recordDao = new RecordDao();
+  const historyDao = new HistoryDao();
+
+  await file.mv(`./${randomFilename}`);
+
+  try {
+    const form = new FormData();
+    form.append('file', fs.createReadStream(`./${randomFilename}`));
+
+    const { data } = await axios.post(
+      `${staticHost}/api/static/upload-audio`,
+      // `http://localhost:3000/upload-audio`,
+      form,
+      {
+        headers: { ...form.getHeaders() },
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+      }
+    );
+
+    fs.unlinkSync(`./${randomFilename}`);
+    console.log('end upload file');
+    console.log(data);
+
+    const user = await userDao.findItem(authUserId);
+
+    await Promise.all(
+      data!.map(async (file: any) => {
+        const uid = parseInt(
+          file.split('/')[file.split('/').length - 1].split('.')[0]
+        );
+
+        const record = await recordDao.findItem({ uid });
+        if (record) {
+          const updatedRecord = await recordDao.updateItem(record, {
+            audioURL: file,
+          });
+          await historyDao.createItem({
+            event: HistoryEvent.UPDATE,
+            entity: HistoryEntity.RECORD,
+            user: user!,
+            record: updatedRecord,
+          });
+        }
+      })
+    );
+
+    return {
+      success: true,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      errors: [{ message: 'Error while upload audio' }],
+    };
+  }
+};
+
 const broadcasterService = {
   getBroadcasters,
   getBroadcaster,
@@ -634,6 +705,7 @@ const broadcasterService = {
   getPreviousSentence,
   toggleFinishRecord,
   submitErrorBroadcasterSentence,
+  uploadAudio,
 };
 
 export { broadcasterService };

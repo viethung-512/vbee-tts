@@ -1,6 +1,6 @@
 {
   "name": "@tts-dev/common",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Common package for text-to-speech project",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",

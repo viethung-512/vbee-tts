@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -16,10 +17,10 @@ import useDrawer from 'hooks/useDrawer';
 import { sidebarWidth, sidebarMinWidth } from 'app/configs/sidebar';
 import ElevationScroll from '../commons/ElevationScroll';
 import AuthMenu from './AuthMenu';
+import { toggleSidebar } from 'app/cores/ui/uiSlice';
+import { AppState, UIState } from 'app/redux/rootReducer';
 
 interface Props {
-  setOpen: (...args: any[]) => void;
-  open: boolean;
   title?: string;
 }
 
@@ -64,9 +65,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Header: React.FC<Props> = ({ setOpen, open, title }) => {
+const Header: React.FC<Props> = ({ title }) => {
   const classes = useStyles();
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const { sidebarOpen } = useSelector<AppState, UIState>(state => state.ui);
   const { openDrawer } = useDrawer();
 
   const matchSM = useMediaQuery(theme.breakpoints.down('sm'));
@@ -76,7 +79,7 @@ const Header: React.FC<Props> = ({ setOpen, open, title }) => {
       <AppBar
         color='inherit'
         className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
+          [classes.appBarShift]: sidebarOpen,
         })}
       >
         <Toolbar style={{ paddingLeft: 0 }}>
@@ -89,12 +92,12 @@ const Header: React.FC<Props> = ({ setOpen, open, title }) => {
                       if (matchSM) {
                         openDrawer('SidebarMenuDrawer');
                       } else {
-                        setOpen(!open);
+                        dispatch(toggleSidebar());
                       }
                     }}
                     className={classes.menuButton}
                   >
-                    {open ? <ListIcon /> : <MoreVertIcon />}
+                    {sidebarOpen ? <ListIcon /> : <MoreVertIcon />}
                   </IconButton>
                 </Grid>
                 <Grid item>

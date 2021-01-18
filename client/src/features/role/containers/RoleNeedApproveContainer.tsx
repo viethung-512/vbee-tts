@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import MaterialTable, {
   Action as MTAction,
@@ -6,10 +6,13 @@ import MaterialTable, {
 } from 'material-table';
 import { useTranslation } from 'react-i18next';
 import { useConfirm } from 'material-ui-confirm';
+import LoadingBar from 'react-top-loading-bar';
 
+import { useTheme } from '@material-ui/core/styles';
 import Chip from '@material-ui/core/Chip';
 
 import useAlert from 'hooks/useAlert';
+import useAsync from 'hooks/useAsync';
 import useModal from 'hooks/useModal';
 import useLocalization from 'hooks/useLocalization';
 import usePermission from 'hooks/usePermission';
@@ -28,10 +31,12 @@ const RoleNeedApproveContainer: React.FC<Props> = ({ history }) => {
   const { materialTable } = useLocalization();
   const { t }: { t: any } = useTranslation();
   const confirm = useConfirm();
+  const theme = useTheme();
   const [loading, setLoading] = useState(false);
   const { alertSuccess, alertError } = useAlert();
   const { closeModal } = useModal();
   const { canUpdateRole } = usePermission();
+  const { ref, startLoading, endLoading } = useAsync();
 
   const handleApprove = (ids: string[]) => {
     confirm({ description: t('WARNING_APPROVE_ROLE') })
@@ -91,33 +96,40 @@ const RoleNeedApproveContainer: React.FC<Props> = ({ history }) => {
   ];
 
   return (
-    <MaterialTable
-      columns={columns}
-      data={query => {
-        return new Promise((resolve, reject) => {
-          roleAPI
-            .getRoles({
-              search: query.search,
-              page: query.page,
-              limit: query.pageSize,
-            })
-            .then(res => {
-              resolve({
-                data: res.docs.filter(doc => doc.policy.draft_version),
-                page: res.page,
-                totalCount: res.totalDocs,
+    <Fragment>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
+      <MaterialTable
+        columns={columns}
+        data={query => {
+          return new Promise((resolve, reject) => {
+            startLoading();
+            roleAPI
+              .getRoles({
+                search: query.search,
+                page: query.page,
+                limit: query.pageSize,
+              })
+              .then(res => {
+                resolve({
+                  data: res.docs.filter(doc => doc.policy.draft_version),
+                  page: res.page,
+                  totalCount: res.totalDocs,
+                });
+              })
+              .catch(err => {
+                reject(err);
+              })
+              .finally(() => {
+                endLoading();
               });
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
-      }}
-      actions={actions}
-      options={{ ...materialTableOptions, selection: canUpdateRole }}
-      localization={materialTable}
-      isLoading={loading}
-    />
+          });
+        }}
+        actions={actions}
+        options={{ ...materialTableOptions, selection: canUpdateRole }}
+        localization={materialTable}
+        isLoading={loading}
+      />
+    </Fragment>
   );
 };
 

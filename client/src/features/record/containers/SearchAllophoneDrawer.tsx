@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -53,7 +53,7 @@ const SearchAllophoneDrawer: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const theme = useTheme();
-  const { drawerProps } = useSelector<AppState, DrawerState>(
+  const { drawerProps, drawerType } = useSelector<AppState, DrawerState>(
     state => state.drawer
   );
   const [allophoneResult, setAllophoneResult] = useState<string | null>(null);
@@ -64,6 +64,16 @@ const SearchAllophoneDrawer: React.FC = () => {
       defaultValues: defaultValues,
     }
   );
+
+  useEffect(() => {
+    if (drawerType && drawerType === 'SearchAllophoneDrawer') {
+      setAllophoneResult('');
+    }
+    return () => {
+      reset({ text: '' });
+      setAllophoneResult('');
+    };
+  }, [drawerType]);
 
   const handleSearch = handleSubmit(async values => {
     if (drawerProps && drawerProps.dialect) {

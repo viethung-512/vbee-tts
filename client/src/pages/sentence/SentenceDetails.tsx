@@ -14,9 +14,9 @@ const SentenceDetails: React.FC<Props> = ({ history, match }) => {
   const sentenceId = match.params.id;
 
   return (
-    <Container style={{ backgroundColor: 'inherit' }}>
+    <div style={{ backgroundColor: 'inherit' }}>
       <SentenceDetailsContainer sentenceId={sentenceId} history={history} />
-    </Container>
+    </div>
   );
 };
 

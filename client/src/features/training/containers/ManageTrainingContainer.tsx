@@ -1,10 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-
-// import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 
 import HeadsetIcon from '@material-ui/icons/Headset';
 import ReceiptIcon from '@material-ui/icons/Receipt';
@@ -17,10 +14,10 @@ import Button from 'app/layout/commons/form/Button';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    padding: theme.spacing(2),
     backgroundColor: '#fff',
     boxShadow: theme.shadows[3],
-    marginTop: theme.spacing(2),
+    padding: theme.spacing(2),
+    borderRadius: 4,
   },
   button: {
     marginRight: theme.spacing(1),
@@ -48,6 +45,7 @@ function getSteps(): TrainingStepType[] {
 
 const ManageTrainingContainer: React.FC = () => {
   const classes = useStyles();
+  const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [progresses, setProgresses] = useState<(Progress | null)[]>([]);
   const steps = getSteps();
@@ -131,14 +129,14 @@ const ManageTrainingContainer: React.FC = () => {
 
   return (
     <Fragment>
-      <Button
-        loading={loading}
-        content='Training'
-        variant='primary'
-        onClick={handleTraining}
-      />
       <Grid container direction='column' className={classes.container}>
-        <Grid item>
+        <Button
+          loading={loading}
+          content='Training'
+          variant='primary'
+          onClick={handleTraining}
+        />
+        <Grid item style={{ marginTop: theme.spacing(3) }}>
           <TrainingSteps steps={steps} activeStep={activeStep} />
         </Grid>
         <Grid item>
