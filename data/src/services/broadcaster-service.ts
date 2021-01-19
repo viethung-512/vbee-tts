@@ -26,7 +26,6 @@ import {
 import { SentenceDoc } from '../models/sentence';
 import { RecordDao } from '../daos/record-dao';
 import { HistoryDao } from '../daos/history-dao';
-import { RecordDoc } from '../models/record';
 import { allophoneService } from './allophone-service';
 import { UploadedFile } from 'express-fileupload';
 
@@ -79,7 +78,7 @@ interface ToggleFinishRecordResponse extends ServiceResponse {
 }
 
 interface SubmitErrorBroadcasterSentenceResponse extends ServiceResponse {
-  record?: RecordDoc;
+  sentence?: SentenceDoc;
 }
 
 const getProgresses = async (
@@ -592,34 +591,34 @@ const submitErrorBroadcasterSentence = async (
   errorMessage: string,
   authUserId: string
 ): Promise<SubmitErrorBroadcasterSentenceResponse> => {
-  const recordDao = new RecordDao();
+  const sentenceDao = new SentenceDao();
   const historyDao = new HistoryDao();
   const userDao = new UserDao();
 
   const user = await userDao.findItem(authUserId);
 
-  const record = await recordDao.findItem({ uid });
-  if (!record) {
+  const sentence = await sentenceDao.findItem({ uid });
+  if (!sentence) {
     return {
       success: false,
-      errors: [{ message: 'This sentence is not have any record' }],
+      errors: [{ message: 'There is no sentence match' }],
     };
   }
 
-  record.status = SentenceStatus.ERROR;
-  record.errorMessage = errorMessage;
-  await record.save();
+  sentence.status = SentenceStatus.ERROR;
+  sentence.errorMessage = errorMessage;
+  await sentence.save();
 
   await historyDao.createItem({
     event: HistoryEvent.ERROR,
-    entity: HistoryEntity.RECORD,
+    entity: HistoryEntity.SENTENCE,
     user: user!,
-    record: record,
+    sentence: sentence,
   });
 
   return {
     success: true,
-    record: record,
+    sentence: sentence,
   };
 };
 
