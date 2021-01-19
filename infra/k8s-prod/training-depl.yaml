@@ -54,6 +54,8 @@ spec:
 
             - name: TRAINING_HOST
               value: 'http://43.239.223.87'
+            - name: TRAINING_HOST_LOCAL
+              value: 'http://localhost'
             - name: TRAINING_PORT
               value: '5002'
 

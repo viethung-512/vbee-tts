@@ -212,9 +212,10 @@ const submitRecord = async (
     success,
     errors,
     allophoneContent,
+    pronunciation,
   } = await allophoneService.getPronunciationAndAllophoneContent({
-    text: record!.original,
-    voice: record!.voice.code,
+    text: submitData.original || record!.original,
+    voice: record!.voice,
     dialect: record!.dialect,
   });
 
@@ -226,8 +227,10 @@ const submitRecord = async (
   }
 
   const updated = await recordDao.updateItem(record!, {
-    allophoneContent: allophoneContent,
+    allophoneContent,
+    pronunciation,
     original: submitData.original,
+    status: SentenceStatus.SUBMITTED,
   });
   await historyDao.createItem({
     event: HistoryEvent.SUBMIT,

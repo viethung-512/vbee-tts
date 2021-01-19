@@ -43,6 +43,7 @@
   "FIELDS_DIALECT": "Giọng vùng miền",
   "FIELDS_ERROR_RECORD_CONTENT": "Nội dung",
   "FIELDS_ALLOPHONE": "Allophone",
+  "FIELDS_RECORD_PRONUNCIATION": "Cách đọc",
 
   "ACTIONS": "Hành động",
   "ACTIONS_ADD": "Thêm",

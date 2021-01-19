@@ -57,6 +57,9 @@ const SearchAllophoneDrawer: React.FC = () => {
     state => state.drawer
   );
   const [allophoneResult, setAllophoneResult] = useState<string | null>(null);
+  const [pronunciationResult, setPronunciationResult] = useState<string | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const { control, errors, handleSubmit, reset } = useForm<SearchAllophoneForm>(
     {
@@ -79,7 +82,6 @@ const SearchAllophoneDrawer: React.FC = () => {
     if (drawerProps && drawerProps.dialect) {
       const dialect = drawerProps.dialect as DialectType;
 
-      console.log(values);
       setLoading(true);
       allophoneAPI
         .searchAllophone(values.text, dialect)
@@ -87,6 +89,7 @@ const SearchAllophoneDrawer: React.FC = () => {
           const allophoneContentMarkup = vkBeautify.xml(
             allophoneContent.replace(/\s\s+/g, ' ')
           );
+          setPronunciationResult(pronunciation);
           setAllophoneResult(allophoneContentMarkup);
         })
         .catch(err => {
@@ -136,6 +139,39 @@ const SearchAllophoneDrawer: React.FC = () => {
                 />
               </Grid>
             </Grid>
+            {pronunciationResult && (
+              <Grid item container style={{ marginTop: theme.spacing(4) }}>
+                <OutlinedInput
+                  label={t('FIELDS_RECORD_PRONUNCIATION')}
+                  fullWidth
+                  disabled
+                  value={pronunciationResult}
+                  endAdornment={
+                    <InputAdornment
+                      position='end'
+                      style={{
+                        position: 'absolute',
+                        top: theme.spacing(4),
+                        right: theme.spacing(3),
+                      }}
+                    >
+                      <CopyToClipboard>
+                        {({ copy }) => (
+                          <IconButton
+                            onClick={() => copy(pronunciationResult)}
+                            size='small'
+                            edge='end'
+                            color='secondary'
+                          >
+                            <FileCopyIcon />
+                          </IconButton>
+                        )}
+                      </CopyToClipboard>
+                    </InputAdornment>
+                  }
+                />
+              </Grid>
+            )}
             {allophoneResult && (
               <Grid item container style={{ marginTop: theme.spacing(4) }}>
                 <OutlinedInput
@@ -144,6 +180,7 @@ const SearchAllophoneDrawer: React.FC = () => {
                       fontFamily: "'Fira Code', monospace",
                     },
                   }}
+                  label={t('FIELDS_ALLOPHONE')}
                   multiline
                   rowsMax={30}
                   fullWidth

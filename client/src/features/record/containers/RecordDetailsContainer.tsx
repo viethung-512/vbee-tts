@@ -16,7 +16,7 @@ import useAsync from 'hooks/useAsync';
 import useModal from 'hooks/useModal';
 import useMutation from 'hooks/useMutation';
 
-import { updateSentenceValidator } from 'app/utils/validators';
+import { updateRecordValidator } from 'app/utils/validators';
 import Navigation from 'app/layout/commons/sentence-record/Navigation';
 import { AppDispatch } from 'app/redux/store';
 import RecordDetailsHeader from '../components/RecordDetailsHeader';
@@ -58,6 +58,7 @@ const defaultValues: RecordActionField = {
   original: '',
   dialect: DialectType.HANOI,
   allophoneContent: '',
+  pronunciation: '',
 };
 
 const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
@@ -86,7 +87,7 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
   } = useForm<RecordActionField>({
     mode: 'onChange',
     defaultValues: defaultValues,
-    resolver: yupResolver(updateSentenceValidator),
+    resolver: yupResolver(updateRecordValidator),
   });
   const { doRequest: submitRecord, loading: submitRecordLoading } = useMutation<
     RecordActionField,
@@ -116,6 +117,7 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
         reset({
           original: record.original,
           dialect: record.dialect,
+          pronunciation: record.pronunciation,
           allophoneContent: record.allophoneContent
             ? vkBeautify.xml(record.allophoneContent.replace(/\s\s+/g, ' '))
             : '',
@@ -208,6 +210,8 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
     lastRecord === '' ||
     nextRecord === '' ||
     previousRecord === '';
+
+  console.log(errors);
 
   return (
     <Grid className={classes.root}>

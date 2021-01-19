@@ -441,7 +441,7 @@ const getRelatedSentence = async (
     needAll: true,
     options: {
       // _id: { $nin: broadcaster.completed },
-      // status: SentenceStatus.APPROVED,
+      status: SentenceStatus.APPROVED,
     },
     sort: { uid: 1 },
   });
@@ -547,12 +547,20 @@ const toggleFinishRecord = async (
 
   await broadcaster.save();
 
+  const sentenceUID = sentence.manual_uid || sentence.uid;
+
+  console.log({ sentenceUID });
+
   const record = await recordDao.findItem({
-    uid: sentence.manual_uid || sentence.uid,
+    uid: sentenceUID,
   });
   const voice = await voiceDao.findItem(broadcaster.voice.id);
   if (!record) {
-    const { success, allophone } = await allophoneService.getAllophone({
+    const {
+      success,
+      allophoneContent,
+      pronunciation,
+    } = await allophoneService.getPronunciationAndAllophoneContent({
       text: sentence.original,
       voice: voice!.code,
       dialect: dialect,
@@ -562,11 +570,12 @@ const toggleFinishRecord = async (
         uid: sentence.manual_uid || sentence.uid,
         type: sentence.type,
         status: SentenceStatus.INITIAL,
-        voice: voice!,
+        voice: voice!.code,
         sentence: sentence,
         original: sentence.original,
         dialect: dialect,
-        allophoneContent: allophone,
+        pronunciation: pronunciation!,
+        allophoneContent: allophoneContent,
       });
 
       await historyDao.createItem({

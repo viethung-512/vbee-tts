@@ -6,7 +6,6 @@ import {
   rootRole,
 } from '@tts-dev/common';
 
-import { getEnv } from '../configs/env-config';
 import { recordService } from '../services/record-service';
 import { importService } from '../services/import-service';
 

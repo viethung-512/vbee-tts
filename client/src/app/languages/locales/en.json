@@ -43,6 +43,7 @@
   "FIELDS_DIALECT": "Dialect",
   "FIELDS_ERROR_RECORD_CONTENT": "Content",
   "FIELDS_ALLOPHONE": "Allophone",
+  "FIELDS_RECORD_PRONUNCIATION": "Pronunciation",
 
   "ACTIONS": "Actions",
   "ACTIONS_ADD": "Add",

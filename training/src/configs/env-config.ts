@@ -69,6 +69,7 @@ export const getEnv = () => {
   const mongoURI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE}?authSource=admin`;
   const elasticsearchURI = `http://${process.env.ELASTICSEARCH_HOST}:${process.env.ELASTICSEARCH_PORT}`;
   const trainingURI = `${process.env.TRAINING_HOST}:${process.env.TRAINING_PORT}`;
+  const trainingLocalURI = `${process.env.TRAINING_HOST_LOCAL}:${process.env.TRAINING_PORT}`;
 
   return {
     port: process.env.PORT,
@@ -95,6 +96,7 @@ export const getEnv = () => {
     queuePrefix: process.env.QUEUE_GROUP_PREFIX,
     training: {
       uri: trainingURI,
+      localURI: trainingLocalURI,
     },
   };
 };

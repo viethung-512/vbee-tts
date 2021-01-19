@@ -10,6 +10,7 @@ export class SentenceSubmittedListener extends Listener<SentenceSubmittedEvent> 
 
   async onMessage(data: SentenceSubmittedEvent['data'], msg: Message) {
     console.log('SentenceSubmittedListener received data');
+    console.log(data);
     await screenshotQueue.add({
       userId: data.userId,
       sentenceId: data.sentenceId,

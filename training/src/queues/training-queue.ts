@@ -15,31 +15,31 @@ interface Payload {
 
 const { redis } = getEnv();
 
-const updateStepStatus = async (
-  training_id: string,
-  stepName: string,
-  status: 'waiting' | 'processing' | 'success' | 'error'
-) => {
-  const trainingProgressDao = new TrainingProgressDao();
-  const trainingProgress = await trainingProgressDao.findItem({ training_id });
+// const updateStepStatus = async (
+//   training_id: string,
+//   stepName: string,
+//   status: 'waiting' | 'processing' | 'success' | 'error'
+// ) => {
+//   const trainingProgressDao = new TrainingProgressDao();
+//   const trainingProgress = await trainingProgressDao.findItem({ training_id });
 
-  const newSteps: {
-    name: string;
-    status?: 'waiting' | 'processing' | 'success' | 'error';
-    errorMessage?: string;
-  }[] = trainingProgress!.steps.map(step => {
-    if (step.name === stepName) {
-      return {
-        name: stepName,
-        status: status,
-      };
-    }
+//   const newSteps: {
+//     name: string;
+//     status?: 'waiting' | 'processing' | 'success' | 'error';
+//     errorMessage?: string;
+//   }[] = trainingProgress!.steps.map(step => {
+//     if (step.name === stepName) {
+//       return {
+//         name: stepName,
+//         status: status,
+//       };
+//     }
 
-    return step;
-  });
+//     return step;
+//   });
 
-  await trainingProgressDao.updateItem(trainingProgress!, { steps: newSteps });
-};
+//   await trainingProgressDao.updateItem(trainingProgress!, { steps: newSteps });
+// };
 
 const trainingQueue = new Queue<Payload>('training:step', {
   redis: { host: redis.host, port: redis.port, password: redis.password },

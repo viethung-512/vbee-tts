@@ -3,7 +3,7 @@ import { Record, RecordAttrs, RecordDoc, RecordModel } from '../models/record';
 
 export class RecordDao extends BaseDao<RecordDoc, RecordModel, RecordAttrs> {
   model = Record;
-  populate = ['checker'];
+  populate = ['checker', 'sentence'];
 
   async createItem(data: RecordAttrs) {
     const record = await Record.build({
@@ -15,6 +15,7 @@ export class RecordDao extends BaseDao<RecordDoc, RecordModel, RecordAttrs> {
       voice: data.voice,
       dialect: data.dialect,
       audioURL: data.audioURL,
+      pronunciation: data.pronunciation,
       allophoneContent: data.allophoneContent,
       checker: data.checker,
       errorMessage: data.errorMessage,
@@ -36,6 +37,7 @@ export class RecordDao extends BaseDao<RecordDoc, RecordModel, RecordAttrs> {
     record.voice = data.voice || record.voice;
     record.dialect = data.dialect || record.dialect;
     record.audioURL = data.audioURL || record.audioURL;
+    record.pronunciation = data.pronunciation || record.pronunciation;
     record.allophoneContent = data.allophoneContent || record.allophoneContent;
     record.checker = data.checker || record.checker;
     record.errorMessage = data.errorMessage || record.errorMessage;
