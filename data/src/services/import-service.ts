@@ -148,9 +148,10 @@ const importAudio = async (
   }
 
   const user = await userDao.findItem(authUserId);
+  const filesURL = files!.filter((url: string) => !url.includes('__MACOSX'));
 
   await Promise.all(
-    files!.map(async file => {
+    filesURL!.map(async file => {
       const uid = parseInt(
         file.split('/')[file.split('/').length - 1].split('.')[0]
       );

@@ -107,7 +107,7 @@ const BroadcasterSentenceHeader: React.FC<Props> = ({
                 />
               )}
               onChange={(e, data) => {
-                history.push(`/broadcaster-sentences/${data.id}`);
+                history.push(`/broadcaster-record/${data.id}`);
               }}
               onInputChange={(e, value) => setSearchTerm(value)}
               {...props}

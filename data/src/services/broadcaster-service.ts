@@ -441,7 +441,7 @@ const getRelatedSentence = async (
     needAll: true,
     options: {
       // _id: { $nin: broadcaster.completed },
-      status: SentenceStatus.APPROVED,
+      // status: SentenceStatus.APPROVED,
     },
     sort: { uid: 1 },
   });
