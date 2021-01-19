@@ -220,7 +220,7 @@ const submitErrorBroadcasterSentence = async (req: Request, res: Response) => {
   const {
     success,
     errors,
-    record,
+    sentence,
   } = await broadcasterService.submitErrorBroadcasterSentence(
     uid,
     errorMessage,
@@ -230,7 +230,7 @@ const submitErrorBroadcasterSentence = async (req: Request, res: Response) => {
     throw new BadRequestError('Bad Request', errors);
   }
 
-  res.status(200).send(record);
+  res.status(200).send(sentence);
 };
 
 const uploadAudio = async (req: Request, res: Response) => {
