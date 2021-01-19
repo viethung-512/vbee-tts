@@ -650,14 +650,16 @@ const uploadAudio = async (
       }
     );
 
+    const filesURL = data.filter((url: string) => !url.includes('__MACOSX'));
+
     fs.unlinkSync(`./${randomFilename}`);
     console.log('end upload file');
-    console.log(data);
+    console.log(filesURL);
 
     const user = await userDao.findItem(authUserId);
 
     await Promise.all(
-      data!.map(async (file: any) => {
+      filesURL!.map(async (file: any) => {
         const uid = parseInt(
           file.split('/')[file.split('/').length - 1].split('.')[0]
         );
