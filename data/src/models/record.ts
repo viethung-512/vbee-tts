@@ -5,7 +5,6 @@ import MongooseFuzzySearching from 'mongoose-fuzzy-searching';
 
 import { UserDoc } from './user';
 import { SentenceDoc } from './sentence';
-import { VoiceDoc } from './voice';
 
 interface RecordAttrs {
   uid: number;
@@ -13,8 +12,9 @@ interface RecordAttrs {
   type: SentenceType;
   status: SentenceStatus;
   sentence: SentenceDoc;
-  voice: VoiceDoc;
+  voice: string;
   dialect: DialectType;
+  pronunciation: string;
   audioURL?: string | null;
   allophoneContent?: string;
   checker?: UserDoc;
@@ -27,8 +27,9 @@ interface RecordDoc extends mongoose.Document {
   type: SentenceType;
   status: SentenceStatus;
   sentence: SentenceDoc;
-  voice: VoiceDoc;
+  voice: string;
   audioURL?: string | null;
+  pronunciation: string;
   allophoneContent?: string;
   checker?: UserDoc;
   dialect: DialectType;
@@ -49,12 +50,10 @@ const recordSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Sentence',
     },
-    voice: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Voice',
-    },
+    voice: String,
     audioURL: String,
     allophoneContent: String,
+    pronunciation: String,
     checker: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

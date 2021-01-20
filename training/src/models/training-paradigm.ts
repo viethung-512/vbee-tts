@@ -10,6 +10,7 @@ interface TrainingParadigmAttrs {
   name: string;
   steps: TrainingStepParadigm[];
   status: 'active' | 'inactive';
+  curr_training_id: string | null;
   description?: string;
 }
 
@@ -17,6 +18,7 @@ interface TrainingParadigmDoc extends mongoose.Document {
   name: string;
   steps: TrainingStepParadigm[];
   status: 'active' | 'inactive';
+  curr_training_id: string | null;
   description?: string;
 }
 
@@ -37,6 +39,7 @@ const trainingParadigmSchema = new mongoose.Schema(
         uid: Number,
       },
     ],
+    curr_training_id: String,
     description: String,
   },
   {

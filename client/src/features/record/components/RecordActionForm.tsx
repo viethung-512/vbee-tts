@@ -22,6 +22,7 @@ import { Record } from 'app/types/record';
 export interface RecordActionField {
   original: string;
   dialect: DialectType;
+  pronunciation: string;
   allophoneContent: string;
 }
 
@@ -131,17 +132,28 @@ const RecordActionForm: React.FC<Props> = ({
           <form style={{ width: '100%' }}>
             <Grid container direction='column'>
               <Grid item container className={classes.formItem}>
-                <Input
-                  control={control}
-                  multiline={true}
-                  rows={3}
-                  name='original'
-                  label={t('FIELDS_RECORD_ORIGINAL')}
-                  isError={Boolean(errors?.original)}
-                  errorMessage={errors?.original?.message}
-                />
-              </Grid>
-              <Grid item container className={classes.formItem}>
+                <Grid item container className={classes.formItem}>
+                  <Input
+                    control={control}
+                    multiline={true}
+                    rows={3}
+                    name='original'
+                    label={t('FIELDS_RECORD_ORIGINAL')}
+                    isError={Boolean(errors?.original)}
+                    errorMessage={errors?.original?.message}
+                  />
+                </Grid>
+                <Grid item container className={classes.formItem}>
+                  <Input
+                    control={control}
+                    multiline={true}
+                    rows={3}
+                    name='pronunciation'
+                    label={t('FIELDS_RECORD_PRONUNCIATION')}
+                    isError={Boolean(errors?.pronunciation)}
+                    errorMessage={errors?.pronunciation?.message}
+                  />
+                </Grid>
                 <Input
                   size='small'
                   name='dialect'

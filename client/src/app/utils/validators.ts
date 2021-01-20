@@ -76,6 +76,11 @@ export const updateSentenceValidator = yup.object().shape({
   dialectHN: yup.string().required(REQUIRED_EXISTS),
 });
 
+export const updateRecordValidator = yup.object().shape({
+  original: yup.string().required(REQUIRED_EXISTS),
+  dialect: yup.string().required(REQUIRED_EXISTS),
+});
+
 export const submitErrorSentenceValidator = yup.object().shape({
   errorMessage: yup.string().required(REQUIRED_EXISTS),
 });

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { SentenceType, DialectType } from '@tts-dev/common';
 import { useConfirm } from 'material-ui-confirm';
+import LoadingBar from 'react-top-loading-bar';
 
 import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
 import Chip from '@material-ui/core/Chip';
@@ -24,6 +25,7 @@ import Button from 'app/layout/commons/form/Button';
 import { sentenceTypes, dialects } from 'app/utils/constants';
 import { setCurrentDialect } from 'features/broadcaster/broadcasterSlice';
 
+import useAsync from 'hooks/useAsync';
 import Input from 'app/layout/commons/form/Input';
 import Spinner from 'app/layout/commons/async/Spinner';
 
@@ -124,6 +126,7 @@ const BroadcasterRecordContainer: React.FC<Props> = ({ history }) => {
   const [files, setFiles] = useState<any>([]);
   const [error, setError] = useState<string | null>(null);
   const [value, setValue] = React.useState(0);
+  const { ref, startLoading, endLoading } = useAsync();
   const confirm = useConfirm();
   const { control, handleSubmit } = useForm<BroadcasterRecordField>({
     mode: 'onChange',
@@ -174,6 +177,7 @@ const BroadcasterRecordContainer: React.FC<Props> = ({ history }) => {
       confirm({ description: t('WARNING_IMPORT_SENTENCE') })
         .then(() => {
           setLoading(true);
+          startLoading();
           broadcasterAPI
             .uploadAudio(file)
             .then(({ success }) => {
@@ -190,6 +194,7 @@ const BroadcasterRecordContainer: React.FC<Props> = ({ history }) => {
               alertError(t('MESSAGE_ALERT_ERROR'));
             })
             .finally(() => {
+              endLoading();
               setLoading(false);
             });
         })
@@ -211,6 +216,7 @@ const BroadcasterRecordContainer: React.FC<Props> = ({ history }) => {
 
   return (
     <div className={classes.root}>
+      <LoadingBar color={theme.palette.secondary.main} ref={ref} />
       <Tabs
         orientation='vertical'
         variant='scrollable'

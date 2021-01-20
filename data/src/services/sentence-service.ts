@@ -287,6 +287,7 @@ const submitSentence = async (
     dialects: newDialects,
     original: submitData.original,
     status: SentenceStatus.SUBMITTED,
+    errorMessage: undefined,
   });
   await historyDao.createItem({
     event: HistoryEvent.SUBMIT,

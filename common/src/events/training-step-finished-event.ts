@@ -7,6 +7,8 @@ export interface TrainingStepFinished {
     training_id: string;
     url: string;
     status: 'success' | 'error';
+    voice?: string;
+    corpora?: string[];
     errorMessage?: string;
   };
 }

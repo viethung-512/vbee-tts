@@ -2,6 +2,9 @@ export const getEnv = () => {
   if (!process.env.PORT) {
     throw new Error('PORT must me defined');
   }
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET must be defined');
+  }
 
   if (!process.env.MONGO_HOST) {
     throw new Error('MONGO_HOST must me defined');
@@ -69,6 +72,7 @@ export const getEnv = () => {
   const mongoURI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE}?authSource=admin`;
   const elasticsearchURI = `http://${process.env.ELASTICSEARCH_HOST}:${process.env.ELASTICSEARCH_PORT}`;
   const trainingURI = `${process.env.TRAINING_HOST}:${process.env.TRAINING_PORT}`;
+  const trainingLocalURI = `${process.env.TRAINING_HOST_LOCAL}:${process.env.TRAINING_PORT}`;
 
   return {
     port: process.env.PORT,
@@ -79,6 +83,7 @@ export const getEnv = () => {
       uri: elasticsearchURI,
       index: process.env.ELASTICSEARCH_INDEX,
     },
+    jwtSecret: process.env.JWT_SECRET,
     redis: {
       host: process.env.REDIS_HOST,
       port: parseInt(process.env.REDIS_PORT),
@@ -95,6 +100,7 @@ export const getEnv = () => {
     queuePrefix: process.env.QUEUE_GROUP_PREFIX,
     training: {
       uri: trainingURI,
+      localURI: trainingLocalURI,
     },
   };
 };

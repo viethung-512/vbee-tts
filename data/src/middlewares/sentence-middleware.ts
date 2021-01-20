@@ -72,30 +72,30 @@ const requireChecker = async (
   next: NextFunction
 ) => {
   if (req.authUser!.role.name === rootRole.name) {
-    next();
-  } else {
-    const userId = req.authUser!.id;
-    const { id } = req.params;
-
-    const sentenceDao = new SentenceDao();
-    const userDao = new UserDao();
-
-    const checker = await userDao.findItem(userId);
-    if (!checker) {
-      throw new BadRequestError('Bad Request', [{ message: 'User not found' }]);
-    }
-
-    const sentence = await sentenceDao.findItem({
-      _id: id,
-      checker: checker,
-    });
-
-    if (!sentence) {
-      throw new UnAuthorizeError();
-    }
-
-    next();
+    return next();
   }
+
+  const userId = req.authUser!.id;
+  const { id } = req.params;
+
+  const sentenceDao = new SentenceDao();
+  const userDao = new UserDao();
+
+  const checker = await userDao.findItem(userId);
+  if (!checker) {
+    throw new BadRequestError('Bad Request', [{ message: 'User not found' }]);
+  }
+
+  const sentence = await sentenceDao.findItem({
+    _id: id,
+    checker: checker,
+  });
+
+  if (!sentence) {
+    throw new UnAuthorizeError();
+  }
+
+  return next();
 };
 
 const sentenceMiddleware = {

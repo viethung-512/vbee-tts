@@ -43,6 +43,7 @@
   "FIELDS_DIALECT": "Dialect",
   "FIELDS_ERROR_RECORD_CONTENT": "Content",
   "FIELDS_ALLOPHONE": "Allophone",
+  "FIELDS_RECORD_PRONUNCIATION": "Pronunciation",
 
   "ACTIONS": "Actions",
   "ACTIONS_ADD": "Add",
@@ -74,6 +75,7 @@
   "ACTIONS_CONTINUE": "Continue",
   "ACTIONS_RECORD": "Record",
   "ACTIONS_UPLOAD_AUDIO": "Upload Audio",
+  "ACTIONS_TRAINING": "Training",
 
   "STATUS": "Status",
   "STATUS_INITIAL": "Initial",
