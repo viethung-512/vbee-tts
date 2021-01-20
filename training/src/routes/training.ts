@@ -5,13 +5,25 @@ import { trainingController } from '../controllers/training-controller';
 const router = express.Router();
 
 router.get(
-  '/progress',
+  '/progress/:id',
   // authUser,
   // requireRootUser,
   trainingController.getTrainingProgresses
 );
+router.get(
+  '/paradigms',
+  authUser,
+  requireRootUser,
+  trainingController.getParadigms
+);
+router.get(
+  '/isTraining',
+  authUser,
+  requireRootUser,
+  trainingController.isTraining
+);
 router.post(
-  '/',
+  '/:id',
   // authUser, requireRootUser,
   trainingController.training
 );

@@ -19,6 +19,7 @@ export class TrainingParadigmDao extends BaseDao<
       name: data.name,
       steps: data.steps,
       description: data.description,
+      curr_training_id: data.curr_training_id,
       status: data.status,
     });
 
@@ -34,6 +35,8 @@ export class TrainingParadigmDao extends BaseDao<
     paradigm.name = data.name || paradigm.name;
     paradigm.steps = data.steps || paradigm.steps;
     paradigm.description = data.description || paradigm.description;
+    paradigm.curr_training_id =
+      data.curr_training_id || paradigm.curr_training_id;
     paradigm.status = data.status || paradigm.status;
 
     await paradigm.save();

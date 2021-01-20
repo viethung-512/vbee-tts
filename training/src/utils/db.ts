@@ -38,8 +38,9 @@ const initDB = async () => {
     await trainingParadigmDao.createItem({
       name: DNNParadigm.name,
       steps: steps,
+      curr_training_id: null,
       description: DNNParadigm.description,
-      status: 'active',
+      status: 'inactive',
     });
   }
 };

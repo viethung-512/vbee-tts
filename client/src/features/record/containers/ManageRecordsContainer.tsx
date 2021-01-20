@@ -26,6 +26,7 @@ import TypeFilter from 'app/layout/commons/sentence-record/TypeFilter';
 import { materialTableOptions } from 'app/configs/material-table';
 import { Record } from 'app/types/record';
 import { formatUID } from 'app/utils/helper';
+import VoiceFilter from 'app/layout/commons/sentence-record/VoiceFilter';
 
 interface RowData extends Record {}
 
@@ -92,9 +93,10 @@ const ManageRecordsContainer: React.FC<Props> = ({ history }) => {
       .catch(err => console.log(err));
   };
 
-  const voiceMarkup = (rowData: RowData) => (
-    <Typography variant='body2'>{rowData?.voice?.code}</Typography>
-  );
+  const voiceMarkup = (rowData: RowData) => {
+    console.log(rowData);
+    return <Typography variant='body2'>{rowData?.voice}</Typography>;
+  };
 
   const uidMarkup = (rowData: RowData) => (
     <Typography
@@ -196,7 +198,7 @@ const ManageRecordsContainer: React.FC<Props> = ({ history }) => {
       field: 'voice',
       render: voiceMarkup,
       hidden: !Boolean(isRootUser),
-      filtering: false,
+      filterComponent: props => <VoiceFilter {...props} />,
     },
     {
       title: t('FIELDS_RECORD_TYPE'),

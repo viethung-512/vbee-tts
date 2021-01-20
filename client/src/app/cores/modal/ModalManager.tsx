@@ -7,6 +7,7 @@ import AssignSentenceModal from 'features/sentence/containers/AssignModal';
 import SubmitErrorRecordModal from 'features/record/containers/SubmitErrorRecordModal';
 import AssignRecordModal from 'features/record/containers/AssignModal';
 import SubmitErrorBroadcasterSentenceModal from 'features/broadcaster/containers/SubmitErrorBroadcasterSentence';
+import TrainingErrorModal from 'features/training/components/TrainingErrorModal';
 // import AssignSentencesModal from 'features/sentence/manage-sentence/AssignModal';
 // import AutoAssignSentencesModal from 'features/sentence/manage-sentence/AutoAssignModal';
 // import CreateVoiceModal from 'features/voice/manage-voices/CreateVoiceModal';
@@ -24,6 +25,7 @@ const ModalManager: React.FC = props => {
       <SubmitErrorRecordModal />
       <AssignRecordModal />
       <SubmitErrorBroadcasterSentenceModal />
+      <TrainingErrorModal />
       {/* <AssignSentencesModal />
       <AutoAssignSentencesModal />
       <SubmitErrorSentenceModal />

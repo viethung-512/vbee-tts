@@ -10,12 +10,11 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-import LinearProgressWithLabel from 'app/layout/commons/async/LinearProgressWithLabel';
+import DoneIcon from '@material-ui/icons/Done';
+import CircularProgressWithLabel from 'app/layout/commons/async/CircularProgressWithLabel';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,6 +30,16 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     resetContainer: {
       padding: theme.spacing(3),
+    },
+    iconContainer: {
+      position: 'absolute',
+      top: 0,
+    },
+    labelRoot: {
+      position: 'relative',
+    },
+    labelContainer: {
+      padding: theme.spacing(0, 4),
     },
   })
 );
@@ -64,17 +73,17 @@ const BaseStepContent: React.FC<Props> = ({
   const classes = useStyles();
   const theme = useTheme();
 
-  const handleNext = () => {
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
-  };
+  // const handleNext = () => {
+  //   setActiveStep(prevActiveStep => prevActiveStep + 1);
+  // };
 
-  const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
-  };
+  // const handleBack = () => {
+  //   setActiveStep(prevActiveStep => prevActiveStep - 1);
+  // };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
+  // const handleReset = () => {
+  //   setActiveStep(0);
+  // };
 
   const handleFixBug = (stepIndex: number) => {
     setSteps(prevSteps => {
@@ -95,7 +104,7 @@ const BaseStepContent: React.FC<Props> = ({
     if (isError) {
       handleFixBug(stepIndex);
     } else {
-      handleNext();
+      // handleNext();
     }
   };
 
@@ -113,7 +122,14 @@ const BaseStepContent: React.FC<Props> = ({
           }) => {
             return (
               <Step key={content}>
-                <StepLabel error={isError}>
+                <StepLabel
+                  error={isError}
+                  classes={{
+                    iconContainer: classes.iconContainer,
+                    root: classes.labelRoot,
+                    labelContainer: classes.labelContainer,
+                  }}
+                >
                   <Grid container direction='column'>
                     <Grid item container>
                       {label}
@@ -124,24 +140,37 @@ const BaseStepContent: React.FC<Props> = ({
                         container
                         style={{ marginTop: theme.spacing(2) }}
                       >
-                        {childrenSteps.map((st, index) => (
-                          <Grid item container key={`${st.label}-${index}`}>
-                            <Grid item xs={4}>
-                              <Typography
-                                variant='body2'
-                                color='textSecondary'
-                                gutterBottom={false}
-                              >
-                                {st.label}
-                              </Typography>
-                            </Grid>
-                            {st.status && (
-                              <Grid item xs={8}>
-                                <LinearProgressWithLabel value={st.progress!} />
+                        {childrenSteps.map((st, index) => {
+                          if (st.label === 'mix_corpora') {
+                            console.log({ st });
+                          }
+                          return (
+                            <Grid item container key={`${st.label}-${index}`}>
+                              <Grid item xs={1}>
+                                {st.progress && st.progress === 100 ? (
+                                  <DoneIcon
+                                    style={{
+                                      color: theme.palette.success.main,
+                                    }}
+                                  />
+                                ) : (
+                                  <CircularProgressWithLabel
+                                    value={st.progress!}
+                                  />
+                                )}
                               </Grid>
-                            )}
-                          </Grid>
-                        ))}
+                              <Grid item xs={11}>
+                                <Typography
+                                  variant='body2'
+                                  color='textSecondary'
+                                  gutterBottom={false}
+                                >
+                                  {st.label}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+                          );
+                        })}
                       </Grid>
                     )}
                   </Grid>

@@ -90,3 +90,8 @@ export const modalActionTypes = {
   DELETE_BROADCASTER: 'DELETE_BROADCASTER',
   DELETE_VOICE: 'DELETE_VOICE',
 };
+
+export const voices = [
+  'voice-vbee-tts-voice-hn_male_manhdung_news_48k-h',
+  'vbee-tts-voice-sg_male_minhhoang_news_48k-h',
+];

@@ -43,6 +43,7 @@
   "FIELDS_DIALECT": "Giọng vùng miền",
   "FIELDS_ERROR_RECORD_CONTENT": "Nội dung",
   "FIELDS_ALLOPHONE": "Allophone",
+  "FIELDS_RECORD_PRONUNCIATION": "Cách đọc",
 
   "ACTIONS": "Hành động",
   "ACTIONS_ADD": "Thêm",
@@ -74,6 +75,7 @@
   "ACTIONS_CONTINUE": "Tiếp tục",
   "ACTIONS_RECORD": "Thu âm",
   "ACTIONS_UPLOAD_AUDIO": "Upload Audio",
+  "ACTIONS_TRAINING": "Huấn luyện giọng",
 
   "STATUS": "Trạng thái",
   "STATUS_INITIAL": "Khởi tạo",

@@ -95,7 +95,7 @@ const deleteBroadcasters = async (req: Request, res: Response) => {
     throw new BadRequestError('Bad Request', errors);
   }
 
-  res.status(200).send(broadcasters);
+  res.send(broadcasters);
 };
 
 const checkBroadcaster = async (req: Request, res: Response) => {

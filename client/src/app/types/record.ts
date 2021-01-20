@@ -14,6 +14,7 @@ export interface Record {
   dialect: DialectType;
   audioURL?: string | null;
   allophoneContent?: string;
+  pronunciation?: string;
   checker?: User;
   errorMessage?: string;
 }

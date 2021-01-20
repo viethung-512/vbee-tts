@@ -2,7 +2,6 @@ import axios from 'axios';
 import { Message } from 'node-nats-streaming';
 import { Listener, Subjects, TrainingStepFinished } from '@tts-dev/common';
 import { queueGroupName } from './queue-group-name';
-import { TrainingProgressDao } from '../../daos/training-progress-dao';
 import { TrainingParadigmDao } from '../../daos/training-paradigm-dao';
 
 export class TrainingStepFinishedListener extends Listener<TrainingStepFinished> {
@@ -11,40 +10,53 @@ export class TrainingStepFinishedListener extends Listener<TrainingStepFinished>
 
   async onMessage(data: TrainingStepFinished['data'], msg: Message) {
     console.log('TrainingStepFinishedListener received data');
-    const trainingProgressDao = new TrainingProgressDao();
     const trainingParadigmDao = new TrainingParadigmDao();
     const { prevUID, training_id, url, status, errorMessage } = data;
 
     if (status === 'success') {
-      const trainingProgress = await trainingProgressDao.findItem({
-        training_id,
+      const trainingParadigm = await trainingParadigmDao.findItem({
+        curr_training_id: training_id,
       });
-      if (trainingProgress) {
-        const trainingParadigm = await trainingParadigmDao.findItem(
-          trainingProgress.paradigm.id
-        );
-        if (trainingParadigm) {
-          if (prevUID === trainingParadigm.steps.length) {
-            // @ts-ignore
-            TRAINING_RUNNING = false;
-            await trainingParadigmDao.updateItem(trainingParadigm, {
-              status: 'inactive',
+      if (trainingParadigm) {
+        if (prevUID === trainingParadigm.steps.length) {
+          // @ts-ignore
+          TRAINING_RUNNING = false;
+          await trainingParadigmDao.updateItem(trainingParadigm, {
+            status: 'inactive',
+            curr_training_id: null,
+          });
+        } else {
+          const nextStep = trainingParadigm.steps.find(
+            st => st.uid === prevUID + 1
+          );
+          console.log({ currentStep: prevUID, nextStep });
+          if (nextStep) {
+            console.log('Next step: ', nextStep);
+            await axios.post(nextStep.step.url, {
+              training_id,
+              voice: 'hn_female_test',
+              corpora: ['book', 'news'],
+              // corpora: ['book'],
             });
-          } else {
-            const nextStep = trainingParadigm.steps.find(
-              st => st.uid === prevUID + 1
-            );
-            console.log({ currentStep: prevUID, nextStep });
-            if (nextStep) {
-              console.log('Next step: ', nextStep);
-              await axios.post(nextStep.step.url, {
-                training_id,
-                voice: 'hn_female_test',
-                corpora: ['book', 'news'],
-              });
-            }
           }
         }
+      }
+    } else if (status === 'error') {
+      console.log({ training_id });
+      const trainingParadigm = await trainingParadigmDao.findItem({
+        curr_training_id: training_id,
+      });
+
+      console.log('need update', trainingParadigm);
+      if (trainingParadigm) {
+        // @ts-ignore
+        TRAINING_RUNNING = false;
+        await trainingParadigmDao.updateItem(trainingParadigm, {
+          status: 'inactive',
+          curr_training_id: '',
+        });
+
+        console.log('updated');
       }
     } else {
       console.log({ status, errorMessage });

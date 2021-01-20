@@ -55,8 +55,16 @@ spec:
 
             - name: TRAINING_HOST
               value: 'http://43.239.223.87'
+            - name: TRAINING_HOST_LOCAL
+              value: 'http://localhost'
             - name: TRAINING_PORT
               value: '5002'
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
 
             - name: STATIC_URL
               value: 'http://tts-static.hung97.com/static/resource'
