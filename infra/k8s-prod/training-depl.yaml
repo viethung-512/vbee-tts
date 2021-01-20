@@ -59,6 +59,12 @@ spec:
             - name: TRAINING_PORT
               value: '5002'
 
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+
             - name: STATIC_URL
               value: 'http://tts-static.hung97.com/static/resource'
             - name: STATIC_HOST
