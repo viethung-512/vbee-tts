@@ -43,5 +43,6 @@ export * from './types/paginate';
 export * from './types/resource';
 export * from './types/sentence';
 export * from './types/service-response';
+export * from './types/training';
 
 export * from './utils/helper';
