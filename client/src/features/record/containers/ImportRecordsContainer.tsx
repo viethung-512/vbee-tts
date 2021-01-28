@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 const ImportRecordsContainer: React.FC<Props> = ({ history }) => {
   const [t] = useTranslation();
   const classes = useStyles();
-  const { alertSuccess, alertError } = useAlert();
+  const { alertSuccess } = useAlert();
   const confirm = useConfirm();
 
   const {

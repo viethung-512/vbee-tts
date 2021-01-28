@@ -5,7 +5,7 @@ import Select from '@material-ui/core/Select';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
 
-import { voices as defaultVoices } from 'app/utils/constants';
+import { defaultVoices } from 'app/constants/voice-constants';
 
 interface Props {
   columnDef: any;

@@ -107,6 +107,7 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
 
     const fetchRecord = async (id: string) => {
       setLoading(true);
+      startLoading();
       const res = await dispatch(getRecord({ id }));
 
       if (res.meta.requestStatus === 'rejected') {
@@ -125,6 +126,7 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
       }
 
       setLoading(false);
+      endLoading();
     };
 
     if (active && recordId) {
@@ -136,6 +138,8 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
       reset(defaultValues);
       dispatch(clearRecord());
     };
+
+    // eslint-disable-next-line
   }, [reset, dispatch, recordId]);
 
   useEffect(() => {
@@ -155,12 +159,16 @@ const RecordDetailsContainer: React.FC<Props> = ({ history, recordId }) => {
     return () => {
       active = false;
     };
+
+    // eslint-disable-next-line
   }, [current, dispatch]);
 
   useEffect(() => {
     if (errors && Object.values(errors).length > 0) {
       alertError(t('MESSAGE_ALERT_ERROR'));
     }
+
+    // eslint-disable-next-line
   }, [errors, alertError, t]);
 
   const submitForm = handleSubmit(async values => {

@@ -62,14 +62,9 @@ spec:
             - name: NATS_CLUSTER_ID
               value: 'tts'
 
-          # resources:
-          #   requests:
-          #     cpu: '50m'
-      hostAliases:
-        # - ip: '192.168.49.2'
-        - ip: '104.154.102.226'
-          hostnames:
-            - 'tts-api.hung97.com'
+          resources:
+            requests:
+              cpu: '20m'
 ---
 apiVersion: v1
 kind: Service

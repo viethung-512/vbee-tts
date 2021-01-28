@@ -1,0 +1,20 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /usr/share/filebeat/mylog/*.log
+    multiline.pattern: '^{'
+    multiline.negate: true
+    multiline.match: after
+    processors:
+      - decode_json_fields:
+          fields: ['message']
+          target: 'json'
+
+output.logstash:
+  hosts: ['logstash:5044']
+  console.pretty: true
+
+processors:
+  - add_docker_metadata:
+      host: 'unix:///host_docker/docker.sock'

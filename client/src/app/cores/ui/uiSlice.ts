@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { MenuItem } from 'app/configs/sidebar';
-import { menus, otherMenu } from 'app/constants/sidebar';
+import { menus, otherMenu } from 'app/constants/sidebar-constants';
 
 interface UIState {
   sidebarOpen: boolean;

@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { validatorMessages } from './constants';
+import { validatorMessages } from '../constants/validator-constants';
 import { minPassword } from './config';
 
 const {

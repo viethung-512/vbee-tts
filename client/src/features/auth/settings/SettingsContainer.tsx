@@ -81,6 +81,8 @@ const SettingsContainer: React.FC = () => {
     return () => {
       endLoading();
     };
+
+    // eslint-disable-next-line
   }, [loading]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {

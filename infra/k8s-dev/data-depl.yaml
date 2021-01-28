@@ -51,9 +51,9 @@ spec:
             - name: QUEUE_GROUP_PREFIX
               value: 'dev'
 
-          # resources:
-          #   requests:
-          #     cpu: '100m'
+          resources:
+            requests:
+              cpu: '30m'
 ---
 apiVersion: v1
 kind: Service

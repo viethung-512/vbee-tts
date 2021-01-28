@@ -151,6 +151,8 @@ const BroadcasterDetailsContainer: React.FC<Props> = ({
     return () => {
       active = false;
     };
+
+    // eslint-disable-next-line
   }, [broadcasterId, reset]);
 
   useEffect(() => {

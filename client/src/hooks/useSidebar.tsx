@@ -1,9 +1,6 @@
-import { useTranslation } from 'react-i18next';
-
 import usePermission from 'hooks/usePermission';
 
 function useSidebar() {
-  const { t }: { t: any } = useTranslation();
   const {
     isRootUser,
     isBroadcaster,

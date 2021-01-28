@@ -15,7 +15,6 @@ import Input from 'app/layout/commons/form/Input';
 import { formatUID } from 'app/utils/helper';
 import { Sentence } from 'app/types/sentence';
 import { DialectType, SentenceType } from '@tts-dev/common';
-import { BroadcasterSentenceFields } from '../containers/BroadcasterSentenceContainer';
 
 interface Props {
   control: Control;

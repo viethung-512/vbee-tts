@@ -150,6 +150,8 @@ const SentenceDetailsContainer: React.FC<Props> = ({ sentenceId, history }) => {
       active = false;
       reset(defaultValues);
     };
+
+    // eslint-disable-next-line
   }, [reset, dispatch, sentenceId]);
 
   useEffect(() => {

@@ -17,6 +17,7 @@ import {
 
 interface Props {
   handleTraining: (paradigm: string, voice: string, corpora: string[]) => void;
+  loading: boolean;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -52,7 +53,7 @@ const defaultValues = {
   corpora: [''],
 };
 
-const TrainingActionsForm: React.FC<Props> = ({ handleTraining }) => {
+const TrainingActionsForm: React.FC<Props> = ({ handleTraining, loading }) => {
   const classes = useStyles();
   const { control, handleSubmit } = useForm<{
     voice: string;
@@ -124,6 +125,7 @@ const TrainingActionsForm: React.FC<Props> = ({ handleTraining }) => {
               variant='primary'
               type='submit'
               style={{ width: 150 }}
+              loading={loading}
             />
           </Fragment>
         )}

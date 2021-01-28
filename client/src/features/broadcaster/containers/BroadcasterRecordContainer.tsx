@@ -22,7 +22,8 @@ import AttachFileIcon from '@material-ui/icons/AttachFile';
 import useAlert from 'hooks/useAlert';
 import broadcasterAPI from 'app/api/broadcasterAPI';
 import Button from 'app/layout/commons/form/Button';
-import { sentenceTypes, dialects } from 'app/utils/constants';
+import { dialects } from 'app/constants/voice-constants';
+import { sentenceTypes } from 'app/constants/sentence-constants';
 import { setCurrentDialect } from 'features/broadcaster/broadcasterSlice';
 
 import useAsync from 'hooks/useAsync';

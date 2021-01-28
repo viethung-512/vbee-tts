@@ -76,6 +76,8 @@ const SearchAllophoneDrawer: React.FC = () => {
       reset({ text: '' });
       setAllophoneResult('');
     };
+
+    // eslint-disable-next-line
   }, [drawerType]);
 
   const handleSearch = handleSubmit(async values => {
