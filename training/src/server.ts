@@ -1,3 +1,4 @@
+require('dotenv').config();
 import { connectDB } from './utils/db';
 import { initIndex } from './utils/elasticsearch';
 import { app } from './app';

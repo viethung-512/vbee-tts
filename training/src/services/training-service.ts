@@ -3,6 +3,7 @@ import {
   PaginateQuery,
   PaginateResponse,
   ServiceResponse,
+  TrainingStep,
 } from '@tts-dev/common';
 import { v4 as uuid } from 'uuid';
 import util from 'util';
@@ -10,10 +11,14 @@ import util from 'util';
 import { TrainingParadigmDao } from '../daos/training-paradigm-dao';
 import client from '../utils/elasticsearch';
 import { getEnv } from '../configs/env-config';
-import { DNNParadigm } from '../configs/training-config';
+// import { DNNParadigm } from '../configs/training-config';
 import { TrainingStepFinishedPublisher } from '../events/publishers/training-step-finished-publisher';
 import { natsWrapper } from '../nats-wrapper';
 import { TrainingParadigmDoc } from '../models/training-paradigm';
+import { dnnModel } from '../constants/training-constants';
+import { TrainingProgressDao } from '../daos/training-progress-dao';
+import { ModelTrainDao } from './../daos/model-train-dao';
+import { getTrainingStepNameByKey } from '../utils/helper';
 
 interface TrainingResponse extends ServiceResponse {
   curTrainingId?: string | null;
@@ -44,6 +49,7 @@ interface Progress {
   current: number;
   percent: number;
   errorMessage?: string;
+  detailedError?: string;
   steps: {
     name: string;
     total: number;
@@ -131,21 +137,22 @@ const getTrainingProgress = async (
   id: string
 ): Promise<TrainingProgressResponse> => {
   console.log('get training progress');
-  const trainingParadigmDao = new TrainingParadigmDao();
+  /** START_NEW_CODE */
+  const trainingProgressDao = new TrainingProgressDao();
 
   try {
-    const activeTrainingParadigm = await trainingParadigmDao.findItem({
-      status: 'active',
-      curr_training_id: id,
+    const curTrainingProgress = await trainingProgressDao.findItem({
+      status: 'progressing',
     });
-    if (!activeTrainingParadigm) {
+    if (!curTrainingProgress) {
       return {
         success: false,
         errors: [{ message: 'Training ID is not valid, please try again' }],
       };
     }
-
-    const progresses = await getTrainingProgressByTrainingId(id);
+    const progresses = await getTrainingProgressByTrainingId(
+      curTrainingProgress.training_id
+    );
 
     return {
       success: true,
@@ -158,32 +165,74 @@ const getTrainingProgress = async (
       errors: [{ message: 'Something went wrong while get training progress' }],
     };
   }
+
+  /** END_NEW_CODE */
+
+  // const trainingParadigmDao = new TrainingParadigmDao();
+
+  // try {
+  //   const activeTrainingParadigm = await trainingParadigmDao.findItem({
+  //     status: 'active',
+  //     curr_training_id: id,
+  //   });
+  //   if (!activeTrainingParadigm) {
+  //     return {
+  //       success: false,
+  //       errors: [{ message: 'Training ID is not valid, please try again' }],
+  //     };
+  //   }
+
+  //   const progresses = await getTrainingProgressByTrainingId(id);
+
+  //   return {
+  //     success: true,
+  //     progresses: progresses,
+  //   };
+  // } catch (err) {
+  //   console.log(err);
+  //   return {
+  //     success: false,
+  //     errors: [{ message: 'Something went wrong while get training progress' }],
+  //   };
+  // }
 };
 
 const getCurrTrainingId = async (): Promise<string | null> => {
+  /** START_NEW_CODE  */
   console.log('get cur training id');
-  const trainingParadigmDao = new TrainingParadigmDao();
-
-  const activeTrainingParadigm = await trainingParadigmDao.findItem({
-    status: 'active',
+  const trainingProgressDao = new TrainingProgressDao();
+  const currProgress = await trainingProgressDao.findItem({
+    status: 'progressing',
   });
 
-  console.log({ activeTrainingParadigm });
-
-  if (!activeTrainingParadigm) {
+  if (!currProgress) {
     return null;
   }
 
-  return activeTrainingParadigm.curr_training_id;
+  return currProgress.training_id;
+  /** END_NEW_CODE  */
+
+  // const trainingParadigmDao = new TrainingParadigmDao();
+
+  // const activeTrainingParadigm = await trainingParadigmDao.findItem({
+  //   status: 'active',
+  // });
+
+  // console.log({ activeTrainingParadigm });
+
+  // if (!activeTrainingParadigm) {
+  //   return null;
+  // }
+
+  // return activeTrainingParadigm.curr_training_id;
 };
 
-const getTrainingProgressByTrainingId = async (training_id: string) => {
+const getGroupTrainingStep = async (
+  compareSteps: TrainingStep[]
+): Promise<string[]> => {
   const { elasticsearch } = getEnv();
 
-  console.log({ training_id });
-
-  // get group step name
-  const groupsRes = await client.search({
+  const res = await client.search({
     index: elasticsearch.index,
     type: '_doc',
     body: {
@@ -197,13 +246,31 @@ const getTrainingProgressByTrainingId = async (training_id: string) => {
       _source: ['json'],
     },
   });
-  const stepsName = groupsRes.aggregations.logs.buckets.map(
-    (bucket: any) => bucket.key
-  );
+  const steps = res.aggregations.logs.buckets
+    .map((bucket: any) => {
+      const matched = compareSteps.find(st => st.key === bucket.key);
+      if (!matched) {
+        return null;
+      }
+
+      return { key: matched.key, index: matched.index };
+    })
+    .filter((res: any) => res !== null)
+    .sort((a: any, b: any) => b.index - a.index)
+    .map((res: any) => res.key);
+
+  return steps;
+};
+
+const getTrainingProgressByTrainingId = async (training_id: string) => {
+  const { elasticsearch } = getEnv();
+  console.log({ training_id });
+
+  const stepsName = await getGroupTrainingStep(dnnModel.steps);
 
   console.log({ stepsName });
 
-  const result: any[] = await Promise.all(
+  const allMatchedProgresses: any[] = await Promise.all(
     stepsName.map(async (st: string) => {
       console.log({ st });
       const res = await client.search({
@@ -232,7 +299,7 @@ const getTrainingProgressByTrainingId = async (training_id: string) => {
 
       console.log(res.hits.hits.length, ' - array response length');
       if (res.hits.hits.length === 0) {
-        return {};
+        return null;
       }
 
       const containerID = (res.hits.hits[0]._source as any).container.id;
@@ -241,25 +308,25 @@ const getTrainingProgressByTrainingId = async (training_id: string) => {
         await new TrainingStepFinishedPublisher(natsWrapper.client).publish({
           prevUID: (res.hits.hits[0]._source as any).stepUID,
           training_id: (res.hits.hits[0]._source as any).training_id,
-          url: '',
           status: 'error',
+          errorMessage: (res.hits.hits[0]._source as any).message,
         });
         const stepName = (res.hits.hits[0]._source as any).name;
-        const stepContainer = containerID;
         const stepUID = getTrainingStepUIDByName(stepName, containerID);
 
         return {
           status: 'error',
-          container: stepContainer,
+          container: containerID,
           training_id: training_id,
           stepUID: stepUID,
           start_time: (res.hits.hits[0]._source as any).start_time,
-          name: stepName,
+          name: getTrainingStepNameByKey(stepName),
           total: 0,
           current: 0,
           percent: 0,
           steps: [],
           errorMessage: (res.hits.hits[0]._source as any).message,
+          detailedError: (res.hits.hits[0]._source as any).detailed_log,
         };
       }
 
@@ -288,8 +355,31 @@ const getTrainingProgressByTrainingId = async (training_id: string) => {
         current = source.steps.length;
       }
 
-      console.log({ steps: source.steps });
-      console.log({ source });
+      if (status === 'error') {
+        await new TrainingStepFinishedPublisher(natsWrapper.client).publish({
+          prevUID: source.stepUID,
+          training_id: source.training_id,
+          status: 'error',
+          errorMessage: source.message,
+        });
+        const stepName = source.name;
+        const stepUID = getTrainingStepUIDByName(stepName, containerID);
+
+        return {
+          status: 'error',
+          container: containerID,
+          training_id: training_id,
+          stepUID: stepUID,
+          start_time: source.start_time,
+          name: getTrainingStepNameByKey(stepName),
+          total: 0,
+          current: 0,
+          percent: 0,
+          steps: [],
+          errorMessage: source.message,
+          detailedError: source.detailed_log,
+        };
+      }
 
       steps = source.steps.map((step: any) => {
         const childStepTotal = step.num_steps;
@@ -326,7 +416,7 @@ const getTrainingProgressByTrainingId = async (training_id: string) => {
         training_id: training_id,
         stepUID: stepUID,
         start_time: source.start_time,
-        name: source.name,
+        name: getTrainingStepNameByKey(source.name),
         total: total,
         current: current,
         percent: percent,
@@ -336,64 +426,129 @@ const getTrainingProgressByTrainingId = async (training_id: string) => {
     })
   );
 
-  console.log({ result });
+  const result = allMatchedProgresses
+    .filter(matched => matched !== null)
+    .sort((a, b) => b.stepUID - a.stepUID);
 
-  result.sort((a, b) => b.stepUID - a.stepUID);
+  console.log({ result });
 
   return result;
 };
 
 const training = async (
-  paradigm: string = DNNParadigm.name,
+  modelTrain: string,
   voice: string,
   corpora: string[]
 ): Promise<TrainingResponse> => {
-  // @ts-ignore
-  TRAINING_RUNNING = true;
-
-  const trainingParadigmDao = new TrainingParadigmDao();
-
-  const currentParadigm = await trainingParadigmDao.findItem({
-    name: paradigm,
-  });
-
-  if (!currentParadigm) {
-    return {
-      success: false,
-      errors: [
-        {
-          message: 'Can not find any paradigm, please try again.',
-        },
-      ],
-    };
-  }
-
-  const training_id = uuid();
-
-  console.log({ training_id });
-
-  await trainingParadigmDao.updateItem(currentParadigm, {
-    curr_training_id: training_id,
-    status: 'active',
-  });
-
+  /** START_NEW_CODE  */
+  const { training } = getEnv();
   try {
-    const firstStep = currentParadigm.steps.find(step => step.uid === 1);
+    // @ts-ignore
+    TRAINING_RUNNING = true;
+    const trainingProgressDao = new TrainingProgressDao();
+    const modelTrainDao = new ModelTrainDao();
+    const training_id = uuid();
 
-    await axios.post(firstStep!.step.url, {
-      voice: voice || 'hn_female_test',
-      corpora: corpora || ['book', 'news'],
+    const matchedModelTrain = await modelTrainDao.findItem(modelTrain);
+    if (!matchedModelTrain) {
+      return {
+        success: false,
+        errors: [{ message: 'Can not found model train, please try again' }],
+      };
+    }
+
+    const newTrainingProgress = await trainingProgressDao.createItem({
       training_id: training_id,
-      train_ratio: 0.9,
+      start_time: new Date().toISOString(),
+      model_train: modelTrain,
+      status: 'progressing',
+      progress_args: {
+        required_args: {
+          voice: voice,
+          corpora: corpora,
+        },
+        optional_args: {
+          1: {
+            train_ratio: 0.9,
+          },
+        },
+      },
     });
+    await modelTrainDao.updateItem(matchedModelTrain, {
+      curr_training_id: training_id,
+    });
+    console.log(
+      'Success created new training progresses: ',
+      newTrainingProgress
+    );
+    const firstStep = matchedModelTrain.steps.sort(
+      (a, b) => a.index - b.index
+    )[0];
+    console.log({ firstStep: firstStep.index });
+
+    await axios.post(`${training.uri}/${firstStep.url}`, {
+      ...newTrainingProgress.progress_args.required_args,
+      ...newTrainingProgress.progress_args.optional_args[firstStep.index],
+      training_id: training_id,
+    });
+
     return { success: true, curTrainingId: training_id };
   } catch (err) {
-    console.log(err);
+    console.log('Some thing went wrong while process training: ', err);
     return {
       success: false,
       errors: [{ message: 'Some thing went wrong while process training' }],
     };
   }
+
+  /** END_NEW_CODE  */
+
+  // // @ts-ignore
+  // TRAINING_RUNNING = true;
+
+  // const trainingParadigmDao = new TrainingParadigmDao();
+
+  // const currentParadigm = await trainingParadigmDao.findItem({
+  //   name: paradigm,
+  // });
+
+  // if (!currentParadigm) {
+  //   return {
+  //     success: false,
+  //     errors: [
+  //       {
+  //         message: 'Can not find any paradigm, please try again.',
+  //       },
+  //     ],
+  //   };
+  // }
+
+  // const training_id = uuid();
+
+  // console.log({ training_id });
+
+  // await trainingParadigmDao.updateItem(currentParadigm, {
+  //   curr_training_id: training_id,
+  //   status: 'active',
+  // });
+
+  // try {
+  //   const firstStep = currentParadigm.steps.find(step => step.uid === 1);
+
+  //   await axios.post(firstStep!.step.url, {
+  //     voice: voice || 'hn_female_test',
+  //     corpora: corpora || ['book', 'news'],
+  //     training_id: training_id,
+  //     train_ratio: 0.9,
+  //   });
+  //   return { success: true, curTrainingId: training_id };
+  // } catch (err) {
+  //   console.log(err);
+  //   return {
+  //     success: false,
+  //     errors: [{ message: 'Some thing went wrong while process training' }],
+  //   };
+  // }
 };
 
 function pingELK() {
@@ -420,14 +575,12 @@ function pingELK() {
           await new TrainingStepFinishedPublisher(natsWrapper.client).publish({
             prevUID: latest!.stepUID,
             training_id: latest!.training_id,
-            url: '',
             status: 'success',
           });
         } else if (latest!.status === 'error') {
           await new TrainingStepFinishedPublisher(natsWrapper.client).publish({
             prevUID: latest!.stepUID,
             training_id: latest!.training_id,
-            url: '',
             status: 'error',
           });
         }

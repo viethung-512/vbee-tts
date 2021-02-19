@@ -5,10 +5,7 @@ export interface TrainingStepFinished {
   data: {
     prevUID: number;
     training_id: string;
-    url: string;
     status: 'success' | 'error';
-    voice?: string;
-    corpora?: string[];
     errorMessage?: string;
   };
 }

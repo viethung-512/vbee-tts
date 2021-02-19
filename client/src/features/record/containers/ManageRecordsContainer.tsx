@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import MaterialTable, { Action, Column } from 'material-table';
 import { useTranslation } from 'react-i18next';

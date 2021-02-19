@@ -10,8 +10,10 @@ client-backup/
 
 test-import/
 
-.env
+# .env
 
 *.txt
 
 # credentials.json
+
+.DS_Store

@@ -1,8 +1,6 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import Container from '@material-ui/core/Container';
-
 import SentenceDetailsContainer from 'features/sentence/containers/SentenceDetailsContainer';
 
 interface Props {

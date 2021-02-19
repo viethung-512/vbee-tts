@@ -100,6 +100,8 @@ const ImportSentencesContainer: React.FC<Props> = ({ history }) => {
     return () => {
       endLoading();
     };
+
+    // eslint-disable-next-line
   }, [fetching]);
 
   const handleImport = async (file: any) => {

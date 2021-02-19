@@ -19,7 +19,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import useSidebar from 'hooks/useSidebar';
 import useDrawer from 'hooks/useDrawer';
 import { sidebarWidth, sidebarMinWidth } from 'app/configs/sidebar';
-import { menus, otherMenu } from 'app/constants/sidebar';
+import { menus, otherMenu } from 'app/constants/sidebar-constants';
 import { AppState, UIState, AuthState } from 'app/redux/rootReducer';
 import { openSubMenu, activeSidebarItem } from 'app/cores/ui/uiSlice';
 import SidebarMenuLoading from './SidebarMenuLoading';

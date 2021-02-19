@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,11 +13,7 @@ import DrawerManager from 'app/cores/drawer/DrawerManager';
 import ModalManager from 'app/cores/modal/ModalManager';
 import AppRoutes from './AppRoutes';
 import { getMe } from 'features/auth/authSlice';
-import {
-  initOpenSubMenu,
-  activeSidebarItem,
-  breadcrumbChange,
-} from 'app/cores/ui/uiSlice';
+import { initOpenSubMenu, activeSidebarItem } from 'app/cores/ui/uiSlice';
 import { AppDispatch } from 'app/redux/store';
 import { AppState, AuthState } from 'app/redux/rootReducer';
 import useAsync from 'hooks/useAsync';
@@ -56,6 +52,8 @@ const App: React.FC = props => {
     };
 
     fetchAuthUser();
+
+    // eslint-disable-next-line
   }, [dispatch]);
 
   useEffect(() => {
@@ -73,6 +71,8 @@ const App: React.FC = props => {
       dispatch(initOpenSubMenu(currentPath));
       dispatch(activeSidebarItem(currentPath));
     }
+
+    // eslint-disable-next-line
   }, []);
 
   return (

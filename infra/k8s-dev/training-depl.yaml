@@ -79,7 +79,7 @@ spec:
 
           resources:
             requests:
-              cpu: '50m'
+              cpu: '20m'
 ---
 apiVersion: v1
 kind: Service

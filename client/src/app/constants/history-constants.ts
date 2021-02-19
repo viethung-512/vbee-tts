@@ -1,0 +1,14 @@
+export const historyEvents = {
+  EVENT_INSERT: 'INSERT',
+  EVENT_UPDATE: 'UPDATE',
+  EVENT_DELETE: 'DELETE',
+  EVENT_ASSIGN: 'ASSIGN',
+  EVENT_SUBMIT: 'SUBMIT',
+  EVENT_ERROR: 'ERROR',
+  EVENT_APPROVE: 'APPROVE',
+};
+
+export const historyEntities = {
+  ENTITY_SENTENCE: 'SENTENCE',
+  ENTITY_RECORD: 'RECORD',
+};

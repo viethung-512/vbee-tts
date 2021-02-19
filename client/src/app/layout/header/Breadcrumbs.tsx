@@ -60,7 +60,7 @@ const Breadcrumbs = () => {
     const pathname = history.location.pathname;
 
     dispatch(breadcrumbChange(pathname));
-  }, [history.location.pathname]);
+  }, [history.location.pathname, dispatch]);
 
   return (
     <MemoryRouter initialEntries={['/inbox']} initialIndex={0}>

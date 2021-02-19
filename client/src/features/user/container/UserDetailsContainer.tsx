@@ -141,6 +141,8 @@ const UserDetailsContainer: React.FC<Props> = ({ userId, history }) => {
       active = false;
       reset(getDefaultValues(userId));
     };
+
+    // eslint-disable-next-line
   }, [reset, userId]);
 
   const handleDelete = async () => {

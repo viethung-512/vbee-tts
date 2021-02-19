@@ -38,9 +38,6 @@ export const getEnv = () => {
     throw new Error('ROOT_USER_PASSWORD must be defined');
   }
 
-  if (!process.env.HOST_URL) {
-    throw new Error('HOST_URL must be defined');
-  }
   if (!process.env.STATIC_HOST) {
     throw new Error('STATIC_HOST must be defined');
   }
@@ -69,7 +66,6 @@ export const getEnv = () => {
       phoneNumber: process.env.ROOT_USER_PHONE_NUMBER,
       password: process.env.ROOT_USER_PASSWORD,
     },
-    hostURL: process.env.HOST_URL,
     staticHost: process.env.STATIC_HOST,
     nats: {
       clusterId: process.env.NATS_CLUSTER_ID,

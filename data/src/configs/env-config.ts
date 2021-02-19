@@ -40,9 +40,6 @@ export const getEnv = () => {
   if (!process.env.NATS_URL) {
     throw new Error('NATS_URL must be defined');
   }
-  if (!process.env.HOST_URL) {
-    throw new Error('HOST_URL must be defined');
-  }
   if (!process.env.QUEUE_GROUP_PREFIX) {
     throw new Error('QUEUE_GROUP_PREFIX must be defined');
   }
@@ -62,7 +59,6 @@ export const getEnv = () => {
       clientId: process.env.NATS_CLIENT_ID,
       url: process.env.NATS_URL,
     },
-    hostURL: process.env.HOST_URL,
     queuePrefix: process.env.QUEUE_GROUP_PREFIX,
   };
 };

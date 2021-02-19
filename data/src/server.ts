@@ -1,3 +1,4 @@
+require('dotenv').config();
 import { connectDB } from './utils/db';
 import { app } from './app';
 import { natsWrapper } from './nats-wrapper';

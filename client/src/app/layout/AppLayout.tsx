@@ -2,7 +2,6 @@ import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import green from '@material-ui/core/colors/green';
 import cyan from '@material-ui/core/colors/cyan';
 
 import Header from './header/Header';

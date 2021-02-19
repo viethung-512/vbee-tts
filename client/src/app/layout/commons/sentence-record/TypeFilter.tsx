@@ -6,7 +6,7 @@ import Select from '@material-ui/core/Select';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
 
-import { recordTypes } from 'app/utils/constants';
+import { sentenceTypes } from 'app/constants/sentence-constants';
 import { SentenceType } from '@tts-dev/common';
 
 interface Props {
@@ -47,7 +47,7 @@ const TypeFilter: React.FC<Props> = ({ columnDef, onFilterChanged }) => {
       className={classes.root}
       IconComponent={() => <span style={{ display: 'none' }}>Icon</span>}
     >
-      {Object.values(recordTypes).map(type => (
+      {Object.values(sentenceTypes).map(type => (
         <MenuItem key={type} value={type}>
           {type}
         </MenuItem>
