@@ -10,7 +10,7 @@ client-backup/
 
 test-import/
 
-.env
+# .env
 
 *.txt
 

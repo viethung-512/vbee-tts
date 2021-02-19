@@ -22,6 +22,8 @@ interface Payload {
 const { redis, staticURL, staticHost } = getEnv();
 const LOGO = `${staticURL}/images/logo/01.png`;
 
+console.log(redis);
+
 const getImageForString = (str: string): Promise<string> => {
   return new Promise(async (resolve, reject) => {
     const imageForContent = await textToImage.generate(str, {

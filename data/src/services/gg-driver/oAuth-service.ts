@@ -14,7 +14,7 @@ import {
 } from '../../configs/gg-driver/oAuth-config';
 import { ServiceResponse } from '@tts-dev/common';
 
-const { hostURL, staticHost } = getEnv();
+const { staticHost } = getEnv();
 
 interface DownloadFileResponse extends ServiceResponse {
   files?: string[];

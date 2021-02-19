@@ -1,5 +1,4 @@
-// require('dotenv').config();
-
+require('dotenv').config();
 import { natsWrapper } from './nats-wrapper';
 import { getEnv } from './configs/env-config';
 import { SentenceSubmittedListener } from './events/listeners/sentence-submitted-listener';
